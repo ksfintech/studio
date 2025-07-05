@@ -1,0 +1,39 @@
+import { getTools, getInsights } from '@/lib/data';
+import type { MetadataRoute } from 'next';
+
+const BASE_URL = 'https://aifintechinsights.com';
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const [tools, insights] = await Promise.all([getTools(), getInsights()]);
+
+  const toolUrls = tools.map(tool => ({
+    url: `${BASE_URL}/tools/${tool.id}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.8,
+  }));
+
+  const insightUrls = insights.map(insight => ({
+    url: `${BASE_URL}/insights/${insight.id}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
+  }));
+
+  const staticUrls = [
+    {
+      url: BASE_URL,
+      lastModified: new Date(),
+      changeFrequency: 'daily' as const,
+      priority: 1.0,
+    },
+    {
+      url: `${BASE_URL}/insights`,
+      lastModified: new Date(),
+      changeFrequency: 'daily' as const,
+      priority: 0.9,
+    },
+  ];
+
+  return [...staticUrls, ...toolUrls, ...insightUrls];
+}
