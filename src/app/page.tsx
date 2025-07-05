@@ -24,11 +24,6 @@ export default async function Home() {
 
   const featuredTools = tools.filter(tool => featuredToolIds.includes(tool.id));
 
-  if (featuredTools.length === 0 && tools.length > 0) {
-    // Fallback to the first tool if no featured tools are set
-    featuredTools.push(tools[0]);
-  }
-
   return (
     <>
       <div className="container mx-auto px-4 pt-12 md:pt-20 pb-8 text-center">
