@@ -7,20 +7,21 @@ export default async function Home() {
   const categories = await getCategories();
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl md:text-5xl font-bold text-primary mb-2">
-          AI Fintech Tools Directory
+    <>
+      <div className="container mx-auto px-4 pt-16 pb-8 text-center">
+        <h1 className="text-4xl md:text-6xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent mb-4">
+          Find The Right AI Tool
         </h1>
         <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
-          Discover the latest AI-powered tools revolutionizing the finance
-          industry. Search by keyword or filter by category to find the right
-          solution for you.
+          Your compass to the world of AI in Fintech. Discover, filter, and
+          find the perfect tool to revolutionize your financial services.
         </p>
       </div>
-      <Suspense fallback={<p>Loading tools...</p>}>
-        <ToolList tools={tools} categories={categories} />
-      </Suspense>
-    </div>
+      <div className="container mx-auto px-4 pb-8">
+        <Suspense fallback={<p>Loading tools...</p>}>
+          <ToolList tools={tools} categories={categories} />
+        </Suspense>
+      </div>
+    </>
   );
 }

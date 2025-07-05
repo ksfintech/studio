@@ -26,7 +26,7 @@ export default async function InsightDetailPage({
 
   return (
     <article>
-      <header className="py-12 bg-secondary">
+      <header className="py-12 bg-secondary/50">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-3xl md:text-5xl font-bold text-primary max-w-4xl mx-auto">
             {insight.title}

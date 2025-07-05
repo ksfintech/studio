@@ -40,44 +40,45 @@ export function ToolList({ tools, categories }: ToolListProps) {
 
   return (
     <div>
-      <div className="mb-8 flex flex-col gap-4 sm:flex-row">
-        <div className="relative flex-grow">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Search by name, company, or keyword..."
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-            className="pl-10 w-full"
-          />
+      <div className="sticky top-[57px] z-40 bg-background/80 backdrop-blur-lg py-4 mb-8 border-b border-border -mx-4 px-4">
+        <div className="container mx-auto px-0 flex flex-col gap-4 sm:flex-row">
+          <div className="relative flex-grow">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Search over 15 AI tools..."
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              className="pl-10 w-full h-12 text-base"
+            />
+          </div>
+          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <SelectTrigger className="w-full sm:w-[240px] h-12 text-base">
+              <SelectValue placeholder="Filter by category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Categories</SelectItem>
+              {categories.map(category => (
+                <SelectItem key={category} value={category}>
+                  {category}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
-        <Select
-          value={selectedCategory}
-          onValueChange={setSelectedCategory}
-        >
-          <SelectTrigger className="w-full sm:w-[200px]">
-            <SelectValue placeholder="Filter by category" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Categories</SelectItem>
-            {categories.map(category => (
-              <SelectItem key={category} value={category}>
-                {category}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
       </div>
 
       {filteredTools.length > 0 ? (
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredTools.map(tool => (
             <ToolCard key={tool.id} tool={tool} />
           ))}
         </div>
       ) : (
         <div className="text-center py-16">
-          <p className="text-lg font-semibold text-foreground">No tools found</p>
+          <p className="text-lg font-semibold text-foreground">
+            No tools found
+          </p>
           <p className="text-muted-foreground">
             Try adjusting your search or filter criteria.
           </p>
