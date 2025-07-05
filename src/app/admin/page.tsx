@@ -73,6 +73,20 @@ export default async function AdminPage() {
 
       <Card>
         <CardHeader>
+          <CardTitle className="text-2xl">Manage Insights</CardTitle>
+          <CardDescription>
+            Create, update, and publish insight articles.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button asChild className="w-full">
+            <Link href="/admin/insights">Go to Insights Management</Link>
+          </Button>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
           <CardTitle className="text-2xl">Set Featured Tool</CardTitle>
           <CardDescription>
             Choose which tool is highlighted on the homepage.

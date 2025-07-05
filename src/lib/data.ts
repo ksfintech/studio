@@ -9,6 +9,7 @@ import {
   getDocs,
   setDoc,
   writeBatch,
+  deleteDoc,
 } from 'firebase/firestore';
 import {
   TOOLS as initialTools,
@@ -121,6 +122,33 @@ export async function getCategories(): Promise<string[]> {
 }
 
 // --- Insights ---
+
+export async function addInsight(insightData: Omit<Insight, 'id'>): Promise<Insight> {
+  const id = insightData.title
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w-]+/g, '');
+
+  const newInsightData = {
+    ...insightData,
+    imageUrl: insightData.imageUrl || 'https://placehold.co/1200x630.png',
+  };
+  
+  const docRef = doc(db, 'insights', id);
+  await setDoc(docRef, newInsightData);
+
+  return { id, ...newInsightData };
+}
+
+export async function updateInsight(id: string, insightData: Omit<Insight, 'id'>): Promise<void> {
+  const docRef = doc(db, 'insights', id);
+  await setDoc(docRef, insightData, { merge: true });
+}
+
+export async function deleteInsight(id: string): Promise<void> {
+  const docRef = doc(db, 'insights', id);
+  await deleteDoc(docRef);
+}
 
 export async function getInsights(): Promise<Insight[]> {
   const insightsCollection = collection(db, 'insights');
