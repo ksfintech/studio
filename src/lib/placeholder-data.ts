@@ -1,6 +1,6 @@
 import type { Tool, Insight } from './definitions';
 
-export let TOOLS: Tool[] = [
+export const TOOLS: Tool[] = [
   {
     id: 'feedzai-risk-engine',
     name: 'Feedzai Risk Engine',
@@ -325,3 +325,15 @@ export const INSIGHTS: Insight[] = [
     imageUrl: 'https://placehold.co/1200x630.png',
   }
 ];
+
+export const CATEGORIES: { id: string; name: string }[] = Array.from(
+  new Set(TOOLS.flatMap(tool => tool.category))
+)
+  .map(category => ({
+    id: category
+      .toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^\w-]+/g, ''),
+    name: category,
+  }))
+  .sort((a, b) => a.name.localeCompare(b.name));

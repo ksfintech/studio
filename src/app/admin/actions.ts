@@ -2,7 +2,7 @@
 'use server';
 
 import { z } from 'zod';
-import { addTool, setFeaturedTool, updateTool } from '@/lib/data';
+import { addTool, updateTool, setFeaturedTool } from '@/lib/data';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import type { Tool } from '@/lib/definitions';
@@ -10,7 +10,9 @@ import type { Tool } from '@/lib/definitions';
 const CreateFormSchema = z.object({
   name: z.string(),
   description: z.string(),
-  category: z.string(),
+  category: z.array(z.string()).min(1, {
+    message: 'Please select at least one category.',
+  }),
   accomplishment: z.string(),
   features: z.string(),
   company: z.string(),
@@ -23,7 +25,6 @@ type CreateToolInput = z.infer<typeof CreateFormSchema>;
 export async function createToolAction(data: CreateToolInput) {
   const toolData: Omit<Tool, 'id'> = {
     ...data,
-    category: data.category.split(',').map(s => s.trim()),
     features: data.features.split(',').map(s => s.trim()),
     logoUrl: data.logoUrl || undefined,
   };
@@ -52,7 +53,6 @@ export async function updateToolAction(data: UpdateToolInput) {
   const { id, ...toolContent } = data;
   const toolData: Omit<Tool, 'id'> = {
     ...toolContent,
-    category: data.category.split(',').map(s => s.trim()),
     features: data.features.split(',').map(s => s.trim()),
     logoUrl: data.logoUrl || undefined,
   };

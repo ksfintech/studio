@@ -1,5 +1,5 @@
 
-import { getToolById } from '@/lib/data';
+import { getToolById, getCategories } from '@/lib/data';
 import { notFound } from 'next/navigation';
 import { EditToolForm } from './edit-tool-form';
 import {
@@ -34,7 +34,10 @@ export default async function EditToolPage({
   params: { id: string };
 }) {
   const id = params.id;
-  const tool = await getToolById(id);
+  const [tool, allCategories] = await Promise.all([
+    getToolById(id),
+    getCategories(),
+  ]);
 
   if (!tool) {
     notFound();
@@ -50,7 +53,7 @@ export default async function EditToolPage({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <EditToolForm tool={tool} />
+          <EditToolForm tool={tool} allCategories={allCategories} />
         </CardContent>
       </Card>
     </div>

@@ -1,7 +1,7 @@
 
 import { AddToolForm } from './add-tool-form';
 import { SetFeaturedToolForm } from './set-featured-tool-form';
-import { getTools, getFeaturedToolId } from '@/lib/data';
+import { getTools, getFeaturedToolId, getCategories } from '@/lib/data';
 import {
   Card,
   CardContent,
@@ -25,8 +25,11 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminPage() {
-  const tools = await getTools();
-  const featuredToolId = await getFeaturedToolId();
+  const [tools, featuredToolId, allCategories] = await Promise.all([
+    getTools(),
+    getFeaturedToolId(),
+    getCategories(),
+  ]);
 
   return (
     <div className="container mx-auto max-w-3xl px-4 py-12 space-y-8">
@@ -42,7 +45,7 @@ export default async function AdminPage() {
             <AccordionItem value="add-tool">
               <AccordionTrigger>Add a New Tool</AccordionTrigger>
               <AccordionContent className="pt-4">
-                <AddToolForm />
+                <AddToolForm allCategories={allCategories} />
               </AccordionContent>
             </AccordionItem>
           </Accordion>

@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
+import { MultiSelect } from '@/components/ui/multi-select';
 
 const FormSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
@@ -25,8 +26,8 @@ const FormSchema = z.object({
     .string()
     .min(10, { message: 'Description must be at least 10 characters.' }),
   category: z
-    .string()
-    .min(1, { message: 'Please enter at least one category (comma-separated).' }),
+    .array(z.string())
+    .min(1, { message: 'Please select at least one category.' }),
   accomplishment: z
     .string()
     .min(10, { message: 'Accomplishment must be at least 10 characters.' }),
@@ -46,7 +47,11 @@ const FormSchema = z.object({
 
 type FormValues = z.infer<typeof FormSchema>;
 
-export function AddToolForm() {
+export function AddToolForm({
+  allCategories,
+}: {
+  allCategories: string[];
+}) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -55,7 +60,7 @@ export function AddToolForm() {
     defaultValues: {
       name: '',
       description: '',
-      category: '',
+      category: [],
       accomplishment: '',
       features: '',
       company: '',
@@ -126,10 +131,16 @@ export function AddToolForm() {
             <FormItem>
               <FormLabel>Categories</FormLabel>
               <FormControl>
-                <Input placeholder="e.g., Fraud Detection, Security" {...field} />
+                <MultiSelect
+                  options={allCategories}
+                  selected={field.value}
+                  onChange={field.onChange}
+                  placeholder="Select categories..."
+                  className="w-full"
+                />
               </FormControl>
               <FormDescription>
-                Provide a comma-separated list of categories.
+                Select one or more relevant categories.
               </FormDescription>
               <FormMessage />
             </FormItem>

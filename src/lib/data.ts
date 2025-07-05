@@ -13,6 +13,7 @@ import {
 import {
   TOOLS as initialTools,
   INSIGHTS as initialInsights,
+  CATEGORIES as initialCategories,
 } from './placeholder-data';
 import type { Tool, Insight } from './definitions';
 
@@ -98,9 +99,25 @@ export async function getToolById(id: string): Promise<Tool | undefined> {
 }
 
 export async function getCategories(): Promise<string[]> {
-  const tools = await getTools();
-  const categories = new Set(tools.flatMap(tool => tool.category));
-  return Array.from(categories).sort();
+  const categoriesCollection = collection(db, 'categories');
+  const categorySnapshot = await getDocs(categoriesCollection);
+
+  if (categorySnapshot.empty) {
+    console.log('No categories found. Seeding database...');
+    const batch = writeBatch(db);
+    initialCategories.forEach(category => {
+      const docRef = doc(db, 'categories', category.id);
+      batch.set({ name: category.name });
+    });
+    await batch.commit();
+    console.log('Database seeded with initial categories.');
+    return initialCategories.map(c => c.name).sort();
+  }
+
+  const categoryList = categorySnapshot.docs.map(
+    doc => doc.data().name as string
+  );
+  return categoryList.sort();
 }
 
 // --- Insights ---

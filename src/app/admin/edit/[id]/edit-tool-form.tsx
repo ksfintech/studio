@@ -21,6 +21,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import type { Tool } from '@/lib/definitions';
 import { Loader2 } from 'lucide-react';
+import { MultiSelect } from '@/components/ui/multi-select';
 
 const FormSchema = z.object({
   id: z.string(),
@@ -29,8 +30,8 @@ const FormSchema = z.object({
     .string()
     .min(10, { message: 'Description must be at least 10 characters.' }),
   category: z
-    .string()
-    .min(1, { message: 'Please enter at least one category (comma-separated).' }),
+    .array(z.string())
+    .min(1, { message: 'Please select at least one category.' }),
   accomplishment: z
     .string()
     .min(10, { message: 'Accomplishment must be at least 10 characters.' }),
@@ -50,7 +51,13 @@ const FormSchema = z.object({
 
 type FormValues = z.infer<typeof FormSchema>;
 
-export function EditToolForm({ tool }: { tool: Tool }) {
+export function EditToolForm({
+  tool,
+  allCategories,
+}: {
+  tool: Tool;
+  allCategories: string[];
+}) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -60,7 +67,7 @@ export function EditToolForm({ tool }: { tool: Tool }) {
       id: tool.id,
       name: tool.name,
       description: tool.description,
-      category: tool.category.join(', '),
+      category: tool.category,
       accomplishment: tool.accomplishment,
       features: tool.features.join(', '),
       company: tool.company,
@@ -73,7 +80,6 @@ export function EditToolForm({ tool }: { tool: Tool }) {
     setIsSubmitting(true);
     const result = await updateToolAction(values);
 
-    // The server action handles the redirect on success, so we only need to handle the error case.
     if (result?.success === false) {
       toast({
         variant: 'destructive',
@@ -127,13 +133,16 @@ export function EditToolForm({ tool }: { tool: Tool }) {
             <FormItem>
               <FormLabel>Categories</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="e.g., Fraud Detection, Security"
-                  {...field}
+                <MultiSelect
+                  options={allCategories}
+                  selected={field.value}
+                  onChange={field.onChange}
+                  placeholder="Select categories..."
+                  className="w-full"
                 />
               </FormControl>
               <FormDescription>
-                Provide a comma-separated list of categories.
+                Select one or more relevant categories.
               </FormDescription>
               <FormMessage />
             </FormItem>
