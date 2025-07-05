@@ -66,7 +66,7 @@ export function ToolCard({ tool }: ToolCardProps) {
                 onClick={e => e.stopPropagation()}
               >
                 Visit Website
-                <ExternalLink />
+                <ExternalLink className="ml-2 h-4 w-4" />
               </a>
             </Button>
           </div>

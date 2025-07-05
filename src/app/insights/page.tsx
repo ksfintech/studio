@@ -1,6 +1,7 @@
 import { getInsights } from '@/lib/data';
 import { InsightCard } from '@/components/insights/insight-card';
 import { Suspense } from 'react';
+import { InsightListSkeleton } from '@/components/insights/insight-skeletons';
 
 export const metadata = {
   title: 'AI Fintech Insights | AIFinTechInsights.com',
@@ -23,7 +24,7 @@ export default async function InsightsPage() {
         </p>
       </div>
 
-      <Suspense fallback={<p>Loading insights...</p>}>
+      <Suspense fallback={<InsightListSkeleton />}>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {insights.map(insight => (
             <InsightCard key={insight.id} insight={insight} />

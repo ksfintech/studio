@@ -1,8 +1,11 @@
-
 import { getTools, getCategories, getFeaturedToolId } from '@/lib/data';
 import { ToolList } from '@/components/tools/tool-list';
 import { Suspense } from 'react';
 import { FeaturedTool } from '@/components/tools/featured-tool';
+import {
+  FeaturedToolSkeleton,
+  ToolListSkeleton,
+} from '@/components/tools/tool-skeletons';
 
 export default async function Home() {
   const [tools, categories, featuredToolId] = await Promise.all([
@@ -28,14 +31,14 @@ export default async function Home() {
 
       {featuredTool && (
         <div className="container mx-auto px-4 pb-12">
-          <Suspense fallback={<p>Loading featured tool...</p>}>
+          <Suspense fallback={<FeaturedToolSkeleton />}>
             <FeaturedTool tool={featuredTool} />
           </Suspense>
         </div>
       )}
 
       <div className="container mx-auto px-4 pb-8">
-        <Suspense fallback={<p>Loading tools...</p>}>
+        <Suspense fallback={<ToolListSkeleton />}>
           <ToolList tools={tools} categories={categories} />
         </Suspense>
       </div>
