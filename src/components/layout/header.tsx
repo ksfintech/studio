@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet';
 import { Menu } from 'lucide-react';
+import { ThemeToggle } from './theme-toggle';
 
 const navItems = [
   { href: '/', label: 'Tools' },
@@ -51,21 +52,26 @@ export function Header() {
           {renderNavLinks()}
         </nav>
 
-        {/* Mobile Navigation */}
-        <div className="flex flex-1 items-center justify-end space-x-2 md:hidden">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Menu className="h-5 w-5" />
-                <span className="sr-only">Toggle Menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right">
-              <div className="flex flex-col gap-y-4 pt-6">
-                {renderNavLinks(true)}
-              </div>
-            </SheetContent>
-          </Sheet>
+        {/* Right side actions */}
+        <div className="flex flex-1 items-center justify-end space-x-2">
+          <ThemeToggle />
+          
+          {/* Mobile Navigation */}
+          <div className="md:hidden">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-5 w-5" />
+                  <span className="sr-only">Toggle Menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right">
+                <div className="flex flex-col gap-y-4 pt-6">
+                  {renderNavLinks(true)}
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </div>
     </header>
