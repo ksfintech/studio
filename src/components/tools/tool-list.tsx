@@ -40,7 +40,7 @@ export function ToolList({ tools, categories }: ToolListProps) {
 
   return (
     <div>
-      <div className="sticky top-[57px] z-40 bg-background/80 backdrop-blur-lg py-4 mb-8 border-b border-border -mx-4 px-4">
+      <div className="sticky top-[57px] z-40 bg-background/80 backdrop-blur-lg py-4 mb-12 border-b border-border -mx-4 px-4">
         <div className="container mx-auto px-0 flex flex-col gap-4 sm:flex-row">
           <div className="relative flex-grow">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />

@@ -40,7 +40,7 @@ export default async function ToolDetailPage({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
         <div className="lg:col-span-2">
           <header className="mb-8">
-            <div className="flex items-center gap-4 mb-4">
+            <div className="flex items-start gap-4 mb-4">
               {tool.logoUrl && (
                 <Image
                   src={tool.logoUrl}
@@ -51,7 +51,7 @@ export default async function ToolDetailPage({
                   data-ai-hint="logo"
                 />
               )}
-              <div>
+              <div className="flex-1">
                 <h1 className="text-4xl font-bold text-primary">{tool.name}</h1>
                 <p className="text-lg text-muted-foreground">
                   by {tool.company}
@@ -60,7 +60,7 @@ export default async function ToolDetailPage({
             </div>
             <div className="flex flex-wrap gap-2">
               {tool.category.map(cat => (
-                <Badge key={cat} variant="default">
+                <Badge key={cat} variant="secondary">
                   {cat}
                 </Badge>
               ))}
@@ -90,7 +90,7 @@ export default async function ToolDetailPage({
           </article>
         </div>
 
-        <aside className="space-y-6">
+        <aside className="space-y-6 lg:sticky lg:top-24 self-start">
           <Card>
             <CardHeader>
               <CardTitle>Visit Website</CardTitle>
