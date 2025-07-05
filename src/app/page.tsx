@@ -1,12 +1,18 @@
-import { getTools, getCategories } from '@/lib/data';
+
+import { getTools, getCategories, getFeaturedToolId } from '@/lib/data';
 import { ToolList } from '@/components/tools/tool-list';
 import { Suspense } from 'react';
 import { FeaturedTool } from '@/components/tools/featured-tool';
 
 export default async function Home() {
-  const tools = await getTools();
-  const categories = await getCategories();
-  const featuredTool = tools[0];
+  const [tools, categories, featuredToolId] = await Promise.all([
+    getTools(),
+    getCategories(),
+    getFeaturedToolId(),
+  ]);
+
+  const featuredTool =
+    tools.find(tool => tool.id === featuredToolId) || tools[0];
 
   return (
     <>

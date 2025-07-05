@@ -1,7 +1,8 @@
+
 'use server';
 
 import { z } from 'zod';
-import { addTool } from '@/lib/data';
+import { addTool, setFeaturedTool } from '@/lib/data';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import type { Tool } from '@/lib/definitions';
@@ -20,9 +21,6 @@ const FormSchema = z.object({
 type CreateToolInput = z.infer<typeof FormSchema>;
 
 export async function createToolAction(data: CreateToolInput) {
-  // Although the client validates, we shouldn't trust it.
-  // In a real app, you'd re-validate here. For this prototype, we'll proceed.
-
   const toolData: Omit<Tool, 'id'> = {
     ...data,
     category: data.category.split(',').map(s => s.trim()),
@@ -40,8 +38,32 @@ export async function createToolAction(data: CreateToolInput) {
     };
   }
 
-  // On successful creation, revalidate the cache for the homepage
-  // and redirect the user there.
   revalidatePath('/');
   redirect('/');
+}
+
+export async function setFeaturedToolAction(formData: FormData) {
+  const toolId = formData.get('toolId') as string;
+
+  if (!toolId) {
+    return {
+      success: false,
+      message: 'Tool ID is required.',
+    };
+  }
+
+  try {
+    await setFeaturedTool(toolId);
+    revalidatePath('/');
+    return {
+      success: true,
+      message: 'Featured tool updated successfully.',
+    };
+  } catch (error) {
+    console.error('Failed to set featured tool:', error);
+    return {
+      success: false,
+      message: 'Database error: Failed to set featured tool.',
+    };
+  }
 }

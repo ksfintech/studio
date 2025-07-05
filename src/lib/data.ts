@@ -16,6 +16,21 @@ import {
 } from './placeholder-data';
 import type { Tool, Insight } from './definitions';
 
+// --- Featured Tool ---
+const FEATURED_TOOL_DOC_REF = doc(db, 'app_config', 'featured_tool');
+
+export async function setFeaturedTool(toolId: string): Promise<void> {
+  await setDoc(FEATURED_TOOL_DOC_REF, { toolId });
+}
+
+export async function getFeaturedToolId(): Promise<string | null> {
+  const docSnap = await getDoc(FEATURED_TOOL_DOC_REF);
+  if (docSnap.exists()) {
+    return docSnap.data().toolId ?? null;
+  }
+  return null;
+}
+
 // --- Tools ---
 
 export async function addTool(toolData: Omit<Tool, 'id'>): Promise<Tool> {
