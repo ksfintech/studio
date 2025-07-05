@@ -1,7 +1,4 @@
 
-import { AddToolForm } from './add-tool-form';
-import { SetFeaturedToolForm } from './set-featured-tool-form';
-import { getTools, getFeaturedToolIds, getCategories } from '@/lib/data';
 import {
   Card,
   CardContent,
@@ -10,95 +7,64 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Metadata } from 'next';
-import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
+import { LayoutGrid, Lightbulb, Settings } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Admin | AIFinTechInsights.com',
-  description: 'Manage AI tools in the directory.',
+  title: 'Admin Dashboard | AIFinTechInsights.com',
+  description: 'Manage content and settings for the application.',
 };
 
-export default async function AdminPage() {
-  const [tools, featuredToolIds, allCategories] = await Promise.all([
-    getTools(),
-    getFeaturedToolIds(),
-    getCategories(),
-  ]);
+const adminSections = [
+  {
+    title: 'Manage Tools',
+    description: 'Add, edit, and update the AI tool directory.',
+    href: '/admin/tools',
+    icon: <LayoutGrid className="h-8 w-8 text-primary" />,
+  },
+  {
+    title: 'Manage Insights',
+    description: 'Create, publish, and manage insight articles.',
+    href: '/admin/insights',
+    icon: <Lightbulb className="h-8 w-8 text-primary" />,
+  },
+  {
+    title: 'Site Settings',
+    description: 'Configure site-wide settings like featured tools.',
+    href: '/admin/settings',
+    icon: <Settings className="h-8 w-8 text-primary" />,
+  },
+];
 
+export default function AdminPage() {
   return (
-    <div className="container mx-auto max-w-3xl px-4 py-12 space-y-8">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl">Manage Tools</CardTitle>
-          <CardDescription>
-            Add a new tool or edit an existing one from the list below.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Accordion type="single" collapsible className="w-full mb-6">
-            <AccordionItem value="add-tool">
-              <AccordionTrigger>Add a New Tool</AccordionTrigger>
-              <AccordionContent className="pt-4">
-                <AddToolForm allCategories={allCategories} />
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
+    <div className="container mx-auto max-w-5xl px-4 py-12">
+      <div className="mb-8 text-center md:text-left">
+        <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
+        <p className="text-muted-foreground">
+          Select a section to manage your application content and settings.
+        </p>
+      </div>
 
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium text-foreground">
-              Edit Existing Tools
-            </h3>
-            {tools.map(tool => (
-              <div
-                key={tool.id}
-                className="flex items-center justify-between rounded-lg border bg-card p-4"
-              >
-                <span className="font-medium text-card-foreground">
-                  {tool.name}
-                </span>
-                <Button asChild variant="outline">
-                  <Link href={`/admin/edit/${tool.id}`}>Edit</Link>
-                </Button>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl">Manage Insights</CardTitle>
-          <CardDescription>
-            Create, update, and publish insight articles.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Button asChild className="w-full">
-            <Link href="/admin/insights">Go to Insights Management</Link>
-          </Button>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl">Set Featured Tools</CardTitle>
-          <CardDescription>
-            Choose which tools are highlighted on the homepage.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <SetFeaturedToolForm
-            tools={tools}
-            currentFeaturedToolIds={featuredToolIds}
-          />
-        </CardContent>
-      </Card>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {adminSections.map(section => (
+          <Link href={section.href} key={section.title} className="block group">
+            <Card className="h-full transition-all duration-300 group-hover:shadow-xl group-hover:border-primary/50 group-hover:-translate-y-1">
+              <CardHeader className="flex-row items-start gap-4 space-y-0 p-4">
+                <div className="flex-shrink-0 rounded-lg bg-primary/10 p-3">
+                  {section.icon}
+                </div>
+                <div className="flex-1 pt-1">
+                  <CardTitle className="text-lg">{section.title}</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent className="p-4 pt-0">
+                <CardDescription>{section.description}</CardDescription>
+              </CardContent>
+            </Card>
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }
