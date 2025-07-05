@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -36,15 +37,22 @@ export function MultiSelect({
 }: MultiSelectProps) {
   const [open, setOpen] = React.useState(false);
 
+  const selectedSet = React.useMemo(() => new Set(selected), [selected]);
+
   const handleSelect = (option: string) => {
-    const newSelected = selected.includes(option)
-      ? selected.filter(item => item !== option)
-      : [...selected, option];
-    onChange(newSelected);
+    const newSelectedSet = new Set(selectedSet);
+    if (newSelectedSet.has(option)) {
+      newSelectedSet.delete(option);
+    } else {
+      newSelectedSet.add(option);
+    }
+    onChange(Array.from(newSelectedSet));
   };
 
   const handleRemove = (option: string) => {
-    onChange(selected.filter(item => item !== option));
+    const newSelectedSet = new Set(selectedSet);
+    newSelectedSet.delete(option);
+    onChange(Array.from(newSelectedSet));
   };
 
   return (
@@ -95,7 +103,7 @@ export function MultiSelect({
                   <Check
                     className={cn(
                       'mr-2 h-4 w-4',
-                      selected.includes(option) ? 'opacity-100' : 'opacity-0'
+                      selectedSet.has(option) ? 'opacity-100' : 'opacity-0'
                     )}
                   />
                   {option}
