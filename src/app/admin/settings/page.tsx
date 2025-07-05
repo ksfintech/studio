@@ -12,6 +12,12 @@ import { Metadata } from 'next';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 
 export const metadata: Metadata = {
   title: 'Site Settings | AIFinTechInsights.com',
@@ -35,20 +41,29 @@ export default async function SettingsPage() {
       <div className="space-y-8">
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">Set Featured Tools</CardTitle>
+            <CardTitle className="text-2xl">Site Settings</CardTitle>
             <CardDescription>
-              Choose which tools are highlighted on the homepage carousel.
+              Manage various site-wide settings from one place.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <SetFeaturedToolForm
-              tools={tools}
-              currentFeaturedToolIds={featuredToolIds}
-            />
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="featured-tools">
+                <AccordionTrigger>Set Featured Tools</AccordionTrigger>
+                <AccordionContent className="pt-4">
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Choose which tools are highlighted on the homepage carousel.
+                  </p>
+                  <SetFeaturedToolForm
+                    tools={tools}
+                    currentFeaturedToolIds={featuredToolIds}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+            {/* This is where future settings sections can be added */}
           </CardContent>
         </Card>
-
-        {/* This is where future settings cards would go */}
       </div>
     </div>
   );
