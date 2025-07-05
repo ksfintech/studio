@@ -21,7 +21,7 @@ export default async function Home() {
           Find The Right AI Tool
         </h1>
         <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
-          Your compass to the world of AI in Fintech. Discover, filter, and
+          Your guide to the world of AI in Fintech. Discover, filter, and
           find the perfect tool to revolutionize your financial services.
         </p>
       </div>

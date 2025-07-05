@@ -4,7 +4,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { Header } from '@/components/layout/header';
 
 export const metadata: Metadata = {
-  title: 'Fintech AI Compass',
+  title: 'AIFinTechInsights.com',
   description: 'An AI Fintech Tools Directory & Insights Platform',
 };
 

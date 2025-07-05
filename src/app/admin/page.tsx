@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/accordion';
 
 export const metadata: Metadata = {
-  title: 'Admin | Fintech AI Compass',
+  title: 'Admin | AIFinTechInsights.com',
   description: 'Manage AI tools in the directory.',
 };
 

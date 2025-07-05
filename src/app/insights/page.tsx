@@ -3,7 +3,7 @@ import { InsightCard } from '@/components/insights/insight-card';
 import { Suspense } from 'react';
 
 export const metadata = {
-  title: 'AI Fintech Insights | Fintech AI Compass',
+  title: 'AI Fintech Insights | AIFinTechInsights.com',
   description:
     'Explore articles and summaries about the latest trends and applications of AI in finance.',
 };

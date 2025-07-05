@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
     return { title: 'Tool Not Found' };
   }
   return {
-    title: `${tool.name} | Fintech AI Compass`,
+    title: `${tool.name} | AIFinTechInsights.com`,
     description: tool.description,
   };
 }

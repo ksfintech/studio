@@ -23,7 +23,7 @@ export async function generateMetadata({
     };
   }
   return {
-    title: `Edit ${tool.name} | Fintech AI Compass`,
+    title: `Edit ${tool.name} | AIFinTechInsights.com`,
     description: `Update the details for the tool: ${tool.name}.`,
   };
 }
