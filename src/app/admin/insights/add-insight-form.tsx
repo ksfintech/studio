@@ -19,6 +19,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
+import { RichTextEditor } from '@/components/ui/rich-text-editor';
 
 const FormSchema = z.object({
   title: z.string().min(5, { message: 'Title must be at least 5 characters.' }),
@@ -97,9 +98,12 @@ export function AddInsightForm() {
           name="content"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Content (HTML)</FormLabel>
+              <FormLabel>Content</FormLabel>
               <FormControl>
-                <Textarea placeholder="<p>Start writing your article here...</p>" {...field} rows={10} />
+                <RichTextEditor
+                  value={field.value}
+                  onChange={field.onChange}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
