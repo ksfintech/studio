@@ -21,16 +21,16 @@ import type { Tool, Insight } from './definitions';
 // --- Featured Tool ---
 const FEATURED_TOOL_DOC_REF = doc(db, 'app_config', 'featured_tool');
 
-export async function setFeaturedTool(toolId: string): Promise<void> {
-  await setDoc(FEATURED_TOOL_DOC_REF, { toolId });
+export async function setFeaturedTools(toolIds: string[]): Promise<void> {
+  await setDoc(FEATURED_TOOL_DOC_REF, { toolIds });
 }
 
-export async function getFeaturedToolId(): Promise<string | null> {
+export async function getFeaturedToolIds(): Promise<string[]> {
   const docSnap = await getDoc(FEATURED_TOOL_DOC_REF);
   if (docSnap.exists()) {
-    return docSnap.data().toolId ?? null;
+    return docSnap.data().toolIds ?? [];
   }
-  return null;
+  return [];
 }
 
 // --- Tools ---

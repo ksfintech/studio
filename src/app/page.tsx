@@ -1,4 +1,5 @@
-import { getTools, getCategories, getFeaturedToolId } from '@/lib/data';
+
+import { getTools, getCategories, getFeaturedToolIds } from '@/lib/data';
 import { ToolList } from '@/components/tools/tool-list';
 import { Suspense } from 'react';
 import { FeaturedTool } from '@/components/tools/featured-tool';
@@ -6,16 +7,27 @@ import {
   FeaturedToolSkeleton,
   ToolListSkeleton,
 } from '@/components/tools/tool-skeletons';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel';
 
 export default async function Home() {
-  const [tools, categories, featuredToolId] = await Promise.all([
+  const [tools, categories, featuredToolIds] = await Promise.all([
     getTools(),
     getCategories(),
-    getFeaturedToolId(),
+    getFeaturedToolIds(),
   ]);
 
-  const featuredTool =
-    tools.find(tool => tool.id === featuredToolId) || tools[0];
+  const featuredTools = tools.filter(tool => featuredToolIds.includes(tool.id));
+
+  if (featuredTools.length === 0 && tools.length > 0) {
+    // Fallback to the first tool if no featured tools are set
+    featuredTools.push(tools[0]);
+  }
 
   return (
     <>
@@ -29,10 +41,46 @@ export default async function Home() {
         </p>
       </div>
 
-      {featuredTool && (
+      {featuredTools.length > 0 && (
         <div className="container mx-auto px-4 pb-12">
           <Suspense fallback={<FeaturedToolSkeleton />}>
-            <FeaturedTool tool={featuredTool} />
+            <section aria-labelledby="featured-tool-heading">
+              <div className="mb-8 text-center">
+                <h2
+                  id="featured-tool-heading"
+                  className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl"
+                >
+                  Featured Tools
+                </h2>
+                <p className="mt-4 text-lg text-muted-foreground">
+                  Check out this week&apos;s highlighted tools for innovation in
+                  Fintech.
+                </p>
+              </div>
+              <Carousel
+                opts={{
+                  align: 'start',
+                  loop: featuredTools.length > 1,
+                }}
+                className="w-full px-12"
+              >
+                <CarouselContent>
+                  {featuredTools.map(tool => (
+                    <CarouselItem key={tool.id}>
+                      <div className="p-1">
+                        <FeaturedTool tool={tool} />
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                {featuredTools.length > 1 && (
+                  <>
+                    <CarouselPrevious className="hidden md:flex" />
+                    <CarouselNext className="hidden md:flex" />
+                  </>
+                )}
+              </Carousel>
+            </section>
           </Suspense>
         </div>
       )}

@@ -1,39 +1,33 @@
 
 'use client';
 
-import { useRef, useState } from 'react';
-import { setFeaturedToolAction } from './actions';
+import { useState } from 'react';
+import { setFeaturedToolsAction } from './actions';
 import { Button } from '@/components/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import type { Tool } from '@/lib/definitions';
 import { Loader2 } from 'lucide-react';
+import { MultiSelect } from '@/components/ui/multi-select';
 
-interface SetFeaturedToolFormProps {
+interface SetFeaturedToolsFormProps {
   tools: Tool[];
-  currentFeaturedToolId: string | null;
+  currentFeaturedToolIds: string[];
 }
 
 export function SetFeaturedToolForm({
   tools,
-  currentFeaturedToolId,
-}: SetFeaturedToolFormProps) {
+  currentFeaturedToolIds,
+}: SetFeaturedToolsFormProps) {
   const { toast } = useToast();
-  const formRef = useRef<HTMLFormElement>(null);
-  const [selectedToolId, setSelectedToolId] = useState<string | null>(
-    currentFeaturedToolId
+  const [selectedToolIds, setSelectedToolIds] = useState<string[]>(
+    currentFeaturedToolIds
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleAction = async (formData: FormData) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     setIsSubmitting(true);
-    const result = await setFeaturedToolAction(formData);
+    const result = await setFeaturedToolsAction(selectedToolIds);
     if (result.success) {
       toast({
         title: 'Success!',
@@ -49,40 +43,41 @@ export function SetFeaturedToolForm({
     setIsSubmitting(false);
   };
 
+  const toolOptions = tools.map(t => t.name).sort();
+  const toolNameToIdMap = new Map(tools.map(t => [t.name, t.id]));
+  const toolIdToNameMap = new Map(tools.map(t => [t.id, t.name]));
+
+  const selectedToolNames = selectedToolIds.map(id => toolIdToNameMap.get(id)).filter((name): name is string => !!name);
+
+  const handleSelectionChange = (newSelectedNames: string[]) => {
+    const newSelectedIds = newSelectedNames.map(name => toolNameToIdMap.get(name)).filter((id): id is string => !!id);
+    setSelectedToolIds(newSelectedIds);
+  };
+
   return (
-    <form ref={formRef} action={handleAction} className="space-y-4">
-      <input type="hidden" name="toolId" value={selectedToolId ?? ''} />
+    <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <label
           htmlFor="tool-select-trigger"
           className="block text-sm font-medium mb-2"
         >
-          Select a Tool
+          Select Featured Tools
         </label>
-        <Select
-          value={selectedToolId ?? undefined}
-          onValueChange={setSelectedToolId}
-          name="toolIdSelect" // This name is for accessibility, not form submission
-        >
-          <SelectTrigger id="tool-select-trigger" className="w-full">
-            <SelectValue placeholder="Select a tool to feature" />
-          </SelectTrigger>
-          <SelectContent>
-            {tools.map(tool => (
-              <SelectItem key={tool.id} value={tool.id}>
-                {tool.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <MultiSelect
+          options={toolOptions}
+          selected={selectedToolNames}
+          onChange={handleSelectionChange}
+          placeholder="Select tools to feature..."
+          className="w-full"
+        />
       </div>
       <Button
         type="submit"
-        disabled={isSubmitting || !selectedToolId}
+        disabled={isSubmitting}
         className="w-full sm:w-auto"
       >
         {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        {isSubmitting ? 'Saving...' : 'Set Featured Tool'}
+        {isSubmitting ? 'Saving...' : 'Set Featured Tools'}
       </Button>
     </form>
   );

@@ -1,7 +1,7 @@
 
 import { AddToolForm } from './add-tool-form';
 import { SetFeaturedToolForm } from './set-featured-tool-form';
-import { getTools, getFeaturedToolId, getCategories } from '@/lib/data';
+import { getTools, getFeaturedToolIds, getCategories } from '@/lib/data';
 import {
   Card,
   CardContent,
@@ -25,9 +25,9 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminPage() {
-  const [tools, featuredToolId, allCategories] = await Promise.all([
+  const [tools, featuredToolIds, allCategories] = await Promise.all([
     getTools(),
-    getFeaturedToolId(),
+    getFeaturedToolIds(),
     getCategories(),
   ]);
 
@@ -87,15 +87,15 @@ export default async function AdminPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">Set Featured Tool</CardTitle>
+          <CardTitle className="text-2xl">Set Featured Tools</CardTitle>
           <CardDescription>
-            Choose which tool is highlighted on the homepage.
+            Choose which tools are highlighted on the homepage.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <SetFeaturedToolForm
             tools={tools}
-            currentFeaturedToolId={featuredToolId}
+            currentFeaturedToolIds={featuredToolIds}
           />
         </CardContent>
       </Card>

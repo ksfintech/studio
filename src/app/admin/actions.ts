@@ -2,7 +2,7 @@
 'use server';
 
 import { z } from 'zod';
-import { addTool, updateTool, setFeaturedTool } from '@/lib/data';
+import { addTool, updateTool, setFeaturedTools } from '@/lib/data';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import type { Tool } from '@/lib/definitions';
@@ -73,28 +73,19 @@ export async function updateToolAction(data: UpdateToolInput) {
   redirect('/admin');
 }
 
-export async function setFeaturedToolAction(formData: FormData) {
-  const toolId = formData.get('toolId') as string;
-
-  if (!toolId) {
-    return {
-      success: false,
-      message: 'Tool ID is required.',
-    };
-  }
-
+export async function setFeaturedToolsAction(toolIds: string[]) {
   try {
-    await setFeaturedTool(toolId);
+    await setFeaturedTools(toolIds);
     revalidatePath('/');
     return {
       success: true,
-      message: 'Featured tool updated successfully.',
+      message: 'Featured tools updated successfully.',
     };
   } catch (error) {
-    console.error('Failed to set featured tool:', error);
+    console.error('Failed to set featured tools:', error);
     return {
       success: false,
-      message: 'Database error: Failed to set featured tool.',
+      message: 'Database error: Failed to set featured tools.',
     };
   }
 }
