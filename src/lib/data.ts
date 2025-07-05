@@ -1,10 +1,24 @@
 'use server';
 
-import { TOOLS, INSIGHTS } from './placeholder-data';
+import { TOOLS as initialTools, INSIGHTS } from './placeholder-data';
 import type { Tool, Insight } from './definitions';
+
+// Make TOOLS mutable for in-memory operations for this demo
+let TOOLS: Tool[] = [...initialTools];
 
 const simulateDelay = (ms: number) =>
   new Promise(resolve => setTimeout(resolve, ms));
+
+export async function addTool(toolData: Omit<Tool, 'id'>): Promise<Tool> {
+  await simulateDelay(200);
+  const newTool: Tool = {
+    ...toolData,
+    id: toolData.name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, ''),
+    logoUrl: toolData.logoUrl || 'https://placehold.co/100x100.png',
+  };
+  TOOLS.unshift(newTool); // Add to the beginning of the array so it appears first
+  return newTool;
+}
 
 export async function getTools(): Promise<Tool[]> {
   await simulateDelay(500);

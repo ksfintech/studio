@@ -11,6 +11,7 @@ import { Menu } from 'lucide-react';
 const navItems = [
   { href: '/', label: 'Tools' },
   { href: '/insights', label: 'Insights' },
+  { href: '/admin', label: 'Admin' },
 ];
 
 export function Header() {

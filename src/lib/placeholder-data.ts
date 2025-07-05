@@ -1,6 +1,6 @@
 import type { Tool, Insight } from './definitions';
 
-export const TOOLS: Tool[] = [
+export let TOOLS: Tool[] = [
   {
     id: 'feedzai-risk-engine',
     name: 'Feedzai Risk Engine',
