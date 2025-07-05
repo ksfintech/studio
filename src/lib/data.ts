@@ -48,7 +48,7 @@ export async function addTool(toolData: Omit<Tool, 'id'>): Promise<Tool> {
 
   const newToolData = {
     ...toolData,
-    logoUrl: toolData.logoUrl || 'https://placehold.co/100x100.png',
+    logoUrl: toolData.logoUrl || 'https://placehold.co/100x100/3B82F6/FFFFFF.png',
   };
 
   const docRef = doc(db, 'tools', id);
@@ -131,7 +131,7 @@ export async function addInsight(insightData: Omit<Insight, 'id'>): Promise<Insi
 
   const newInsightData = {
     ...insightData,
-    imageUrl: insightData.imageUrl || 'https://placehold.co/1200x630.png',
+    imageUrl: insightData.imageUrl || 'https://placehold.co/1200x630/3B82F6/FFFFFF.png',
   };
   
   const docRef = doc(db, 'insights', id);
