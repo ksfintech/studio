@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import { setFeaturedToolsAction } from './actions';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -22,35 +22,37 @@ export function SetFeaturedToolForm({
   const [selectedToolIds, setSelectedToolIds] = useState<string[]>(
     currentFeaturedToolIds
   );
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    const result = await setFeaturedToolsAction(selectedToolIds);
-    if (result.success) {
-      toast({
-        title: 'Success!',
-        description: result.message,
-      });
-    } else {
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: result.message,
-      });
-    }
-    setIsSubmitting(false);
+    startTransition(async () => {
+      const result = await setFeaturedToolsAction(selectedToolIds);
+      if (result.success) {
+        toast({
+          title: 'Success!',
+          description: result.message,
+        });
+      } else {
+        toast({
+          variant: 'destructive',
+          title: 'Error',
+          description: result.message,
+        });
+      }
+    });
   };
 
   const toolOptions = tools.map(t => t.name).sort();
-  const toolNameToIdMap = new Map(tools.map(t => [t.name, t.id]));
-  const toolIdToNameMap = new Map(tools.map(t => [t.id, t.name]));
 
-  const selectedToolNames = selectedToolIds.map(id => toolIdToNameMap.get(id)).filter((name): name is string => !!name);
+  const selectedToolNames = selectedToolIds
+    .map(id => tools.find(tool => tool.id === id)?.name)
+    .filter((name): name is string => !!name);
 
   const handleSelectionChange = (newSelectedNames: string[]) => {
-    const newSelectedIds = newSelectedNames.map(name => toolNameToIdMap.get(name)).filter((id): id is string => !!id);
+    const newSelectedIds = newSelectedNames
+      .map(name => tools.find(tool => tool.name === name)?.id)
+      .filter((id): id is string => !!id);
     setSelectedToolIds(newSelectedIds);
   };
 
@@ -73,11 +75,11 @@ export function SetFeaturedToolForm({
       </div>
       <Button
         type="submit"
-        disabled={isSubmitting}
+        disabled={isPending}
         className="w-full sm:w-auto"
       >
-        {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        {isSubmitting ? 'Saving...' : 'Set Featured Tools'}
+        {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+        {isPending ? 'Saving...' : 'Set Featured Tools'}
       </Button>
     </form>
   );
