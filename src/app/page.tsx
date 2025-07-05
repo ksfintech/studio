@@ -1,10 +1,12 @@
 import { getTools, getCategories } from '@/lib/data';
 import { ToolList } from '@/components/tools/tool-list';
 import { Suspense } from 'react';
+import { FeaturedTool } from '@/components/tools/featured-tool';
 
 export default async function Home() {
   const tools = await getTools();
   const categories = await getCategories();
+  const featuredTool = tools[0];
 
   return (
     <>
@@ -17,6 +19,15 @@ export default async function Home() {
           find the perfect tool to revolutionize your financial services.
         </p>
       </div>
+
+      {featuredTool && (
+        <div className="container mx-auto px-4 pb-12">
+          <Suspense fallback={<p>Loading featured tool...</p>}>
+            <FeaturedTool tool={featuredTool} />
+          </Suspense>
+        </div>
+      )}
+
       <div className="container mx-auto px-4 pb-8">
         <Suspense fallback={<p>Loading tools...</p>}>
           <ToolList tools={tools} categories={categories} />
