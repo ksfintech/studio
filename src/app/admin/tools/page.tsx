@@ -17,7 +17,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { ArrowLeft, Pencil } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
+import { AdminToolList } from './admin-tool-list';
 
 export const metadata: Metadata = {
   title: 'Manage Tools | AIFinTechInsights.com',
@@ -55,31 +56,7 @@ export default async function ManageToolsPage() {
             </AccordionItem>
           </Accordion>
 
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium text-foreground">
-              Existing Tools
-            </h3>
-            <div className="rounded-lg border">
-              {tools.map(tool => (
-                <div
-                  key={tool.id}
-                  className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 gap-4 border-b last:border-b-0"
-                >
-                  <span className="font-medium text-card-foreground flex-1">
-                    {tool.name}
-                  </span>
-                  <div className="flex gap-2 shrink-0 self-end sm:self-center">
-                    <Button asChild variant="outline" size="sm">
-                      <Link href={`/admin/edit/${tool.id}`}>
-                        <Pencil className="h-4 w-4 mr-2" />
-                        Edit
-                      </Link>
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <AdminToolList tools={tools} />
         </CardContent>
       </Card>
     </div>
