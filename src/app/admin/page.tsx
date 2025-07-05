@@ -10,6 +10,14 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Metadata } from 'next';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 
 export const metadata: Metadata = {
   title: 'Admin | Fintech AI Compass',
@@ -24,6 +32,44 @@ export default async function AdminPage() {
     <div className="container mx-auto max-w-3xl px-4 py-12 space-y-8">
       <Card>
         <CardHeader>
+          <CardTitle className="text-2xl">Manage Tools</CardTitle>
+          <CardDescription>
+            Add a new tool or edit an existing one from the list below.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Accordion type="single" collapsible className="w-full mb-6">
+            <AccordionItem value="add-tool">
+              <AccordionTrigger>Add a New Tool</AccordionTrigger>
+              <AccordionContent className="pt-4">
+                <AddToolForm />
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium text-foreground">
+              Edit Existing Tools
+            </h3>
+            {tools.map(tool => (
+              <div
+                key={tool.id}
+                className="flex items-center justify-between rounded-lg border bg-card p-4"
+              >
+                <span className="font-medium text-card-foreground">
+                  {tool.name}
+                </span>
+                <Button asChild variant="outline">
+                  <Link href={`/admin/edit/${tool.id}`}>Edit</Link>
+                </Button>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
           <CardTitle className="text-2xl">Set Featured Tool</CardTitle>
           <CardDescription>
             Choose which tool is highlighted on the homepage.
@@ -34,18 +80,6 @@ export default async function AdminPage() {
             tools={tools}
             currentFeaturedToolId={featuredToolId}
           />
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl">Add a New AI Tool</CardTitle>
-          <CardDescription>
-            Fill out the form below to add a new tool to the directory.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <AddToolForm />
         </CardContent>
       </Card>
     </div>

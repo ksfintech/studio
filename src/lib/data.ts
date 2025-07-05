@@ -33,6 +33,11 @@ export async function getFeaturedToolId(): Promise<string | null> {
 
 // --- Tools ---
 
+export async function updateTool(id: string, toolData: Omit<Tool, 'id'>): Promise<void> {
+  const docRef = doc(db, 'tools', id);
+  await setDoc(docRef, toolData);
+}
+
 export async function addTool(toolData: Omit<Tool, 'id'>): Promise<Tool> {
   const id = toolData.name
     .toLowerCase()

@@ -2,12 +2,12 @@
 'use server';
 
 import { z } from 'zod';
-import { addTool, setFeaturedTool } from '@/lib/data';
+import { addTool, setFeaturedTool, updateTool } from '@/lib/data';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import type { Tool } from '@/lib/definitions';
 
-const FormSchema = z.object({
+const CreateFormSchema = z.object({
   name: z.string(),
   description: z.string(),
   category: z.string(),
@@ -18,7 +18,7 @@ const FormSchema = z.object({
   logoUrl: z.string().optional(),
 });
 
-type CreateToolInput = z.infer<typeof FormSchema>;
+type CreateToolInput = z.infer<typeof CreateFormSchema>;
 
 export async function createToolAction(data: CreateToolInput) {
   const toolData: Omit<Tool, 'id'> = {
@@ -40,6 +40,37 @@ export async function createToolAction(data: CreateToolInput) {
 
   revalidatePath('/');
   redirect('/');
+}
+
+const UpdateFormSchema = CreateFormSchema.extend({
+  id: z.string(),
+});
+
+type UpdateToolInput = z.infer<typeof UpdateFormSchema>;
+
+export async function updateToolAction(data: UpdateToolInput) {
+  const { id, ...toolContent } = data;
+  const toolData: Omit<Tool, 'id'> = {
+    ...toolContent,
+    category: data.category.split(',').map(s => s.trim()),
+    features: data.features.split(',').map(s => s.trim()),
+    logoUrl: data.logoUrl || undefined,
+  };
+
+  try {
+    await updateTool(id, toolData);
+  } catch (error) {
+    console.error('Failed to update tool:', error);
+    return {
+      success: false,
+      message: 'Database error: Failed to update tool.',
+    };
+  }
+
+  revalidatePath('/');
+  revalidatePath('/admin');
+  revalidatePath(`/tools/${id}`);
+  redirect('/admin');
 }
 
 export async function setFeaturedToolAction(formData: FormData) {
