@@ -27,7 +27,10 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="font-body antialiased flex flex-col min-h-screen bg-background">
+      <body
+        className="font-body antialiased flex flex-col min-h-screen bg-background"
+        suppressHydrationWarning={true}
+      >
         <Header />
         <main className="flex-1">{children}</main>
         <Toaster />
