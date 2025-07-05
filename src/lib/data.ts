@@ -107,7 +107,7 @@ export async function getCategories(): Promise<string[]> {
     const batch = writeBatch(db);
     initialCategories.forEach(category => {
       const docRef = doc(db, 'categories', category.id);
-      batch.set({ name: category.name });
+      batch.set(docRef, { name: category.name });
     });
     await batch.commit();
     console.log('Database seeded with initial categories.');
