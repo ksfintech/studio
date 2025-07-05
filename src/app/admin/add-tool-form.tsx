@@ -19,6 +19,8 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import { MultiSelect } from '@/components/ui/multi-select';
+import { generateToolDetails } from '@/ai/flows/generate-tool-details';
+import { Wand2, Loader2 } from 'lucide-react';
 
 const FormSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
@@ -54,6 +56,8 @@ export function AddToolForm({
 }) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [aiInputText, setAiInputText] = useState('');
 
   const form = useForm<FormValues>({
     resolver: zodResolver(FormSchema),
@@ -68,6 +72,50 @@ export function AddToolForm({
       logoUrl: '',
     },
   });
+
+  async function handleGenerateWithAi() {
+    if (!aiInputText.trim()) {
+      toast({
+        variant: 'destructive',
+        title: 'Input Required',
+        description: 'Please paste some text about the tool to generate details.',
+      });
+      return;
+    }
+
+    setIsGenerating(true);
+    try {
+      const result = await generateToolDetails({
+        text: aiInputText,
+        existingCategories: allCategories,
+      });
+
+      form.setValue('name', result.name, { shouldValidate: true });
+      form.setValue('description', result.description, { shouldValidate: true });
+      form.setValue('company', result.company, { shouldValidate: true });
+      form.setValue('category', result.categories, { shouldValidate: true });
+      form.setValue('features', result.features.join(', '), {
+        shouldValidate: true,
+      });
+      form.setValue('accomplishment', result.accomplishment, {
+        shouldValidate: true,
+      });
+
+      toast({
+        title: 'AI Generation Complete',
+        description: 'The form has been populated. Please review and submit.',
+      });
+    } catch (error) {
+      console.error('Failed to generate tool details with AI:', error);
+      toast({
+        variant: 'destructive',
+        title: 'AI Generation Failed',
+        description: 'Could not generate details. Please try again or fill the form manually.',
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  }
 
   async function onSubmit(values: FormValues) {
     setIsSubmitting(true);
@@ -86,13 +134,45 @@ export function AddToolForm({
         title: 'Success!',
         description: 'Tool created successfully. Redirecting...',
       });
-      // The server action handles the redirect, so we don't need to call router.push here.
     }
   }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <div className="space-y-4 rounded-lg border p-4 bg-secondary/50">
+          <div className="flex items-center gap-2">
+            <Wand2 className="h-5 w-5 text-primary" />
+            <h3 className="text-lg font-semibold">Generate with AI</h3>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Paste text from the tool's website below, and AI will attempt to
+            fill out the form for you.
+          </p>
+          <Textarea
+            placeholder="Paste text here from a tool's 'About' or 'Product' page..."
+            value={aiInputText}
+            onChange={(e) => setAiInputText(e.target.value)}
+            className="bg-background"
+            rows={5}
+            disabled={isGenerating}
+          />
+          <Button
+            type="button"
+            onClick={handleGenerateWithAi}
+            disabled={isGenerating || !aiInputText}
+          >
+            {isGenerating ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Generating...
+              </>
+            ) : (
+              'Generate Details'
+            )}
+          </Button>
+        </div>
+
         <FormField
           control={form.control}
           name="name"
@@ -226,7 +306,7 @@ export function AddToolForm({
           )}
         />
 
-        <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
+        <Button type="submit" disabled={isSubmitting || isGenerating} className="w-full sm:w-auto">
           {isSubmitting ? 'Adding Tool...' : 'Add Tool'}
         </Button>
       </form>
