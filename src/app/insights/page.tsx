@@ -1,7 +1,7 @@
 import { getInsights } from '@/lib/data';
-import { InsightCard } from '@/components/insights/insight-card';
 import { Suspense } from 'react';
 import { InsightListSkeleton } from '@/components/insights/insight-skeletons';
+import { InsightList } from '@/components/insights/insight-list';
 
 export const metadata = {
   title: 'AI Fintech Insights | AIFinTechInsights.com',
@@ -13,8 +13,8 @@ export default async function InsightsPage() {
   const insights = await getInsights();
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="text-center mb-12">
+    <div className="container mx-auto px-4 pt-8">
+      <div className="text-center mb-8">
         <h1 className="text-4xl md:text-5xl font-bold text-primary mb-2">
           AI Fintech Insights
         </h1>
@@ -25,11 +25,7 @@ export default async function InsightsPage() {
       </div>
 
       <Suspense fallback={<InsightListSkeleton />}>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {insights.map(insight => (
-            <InsightCard key={insight.id} insight={insight} />
-          ))}
-        </div>
+        <InsightList insights={insights} />
       </Suspense>
     </div>
   );
