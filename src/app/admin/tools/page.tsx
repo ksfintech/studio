@@ -47,7 +47,9 @@ export default async function ManageToolsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Accordion type="single" collapsible className="w-full mb-6">
+          <AdminToolList tools={tools} />
+
+          <Accordion type="single" collapsible className="w-full mt-8">
             <AccordionItem value="add-tool">
               <AccordionTrigger>Add a New Tool</AccordionTrigger>
               <AccordionContent className="pt-4">
@@ -55,8 +57,6 @@ export default async function ManageToolsPage() {
               </AccordionContent>
             </AccordionItem>
           </Accordion>
-
-          <AdminToolList tools={tools} />
         </CardContent>
       </Card>
     </div>
