@@ -88,7 +88,7 @@ body {
     background-color: hsl(var(--background));
   }
   html.light body {
-    background-image: linear-gradient(to bottom right, hsl(54 70% 96%), hsl(33 80% 96%), hsl(340 80% 96%));
+    background-image: linear-gradient(to bottom right, hsl(210 100% 98%), hsl(220 100% 97%), hsl(230 100% 98%));
     background-repeat: no-repeat;
     background-attachment: fixed;
   }
