@@ -7,13 +7,14 @@ import { Icons } from '@/components/icons';
 import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet';
-import { Menu } from 'lucide-react';
+import { Menu, Wand2 } from 'lucide-react';
 import { ThemeToggle } from './theme-toggle';
 
 const navItems = [
   { href: '/', label: 'Agents' },
   { href: '/insights', label: 'Insights' },
   { href: '/compare', label: 'Compare' },
+  { href: '/recommend', label: 'Recommender' },
   { href: '/admin', label: 'Admin' },
 ];
 
@@ -56,6 +57,11 @@ export function Header() {
 
         {/* Right side actions */}
         <div className="flex flex-1 items-center justify-end space-x-2">
+          <Button asChild className="hidden md:flex">
+            <Link href="/recommend">
+              <Wand2 className="mr-2 h-4 w-4" /> AI Recommender
+            </Link>
+          </Button>
           <ThemeToggle />
           
           {/* Mobile Navigation */}
