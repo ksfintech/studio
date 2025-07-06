@@ -26,7 +26,11 @@ export function FeaturedAgent({ agent }: FeaturedAgentProps) {
         <div className="flex items-center justify-center md:col-span-1">
           {agent.logoUrl && (
             <Image
-              src={agent.logoUrl}
+              src={
+                agent.logoUrl.startsWith('http')
+                  ? agent.logoUrl
+                  : 'https://placehold.co/150x150/324A80.png'
+              }
               alt={`${agent.name} logo`}
               width={150}
               height={150}

@@ -30,7 +30,11 @@ export function AgentCard({ agent }: AgentCardProps) {
           <div className="flex items-center gap-4">
             {agent.logoUrl && (
               <Image
-                src={agent.logoUrl}
+                src={
+                  agent.logoUrl.startsWith('http')
+                    ? agent.logoUrl
+                    : 'https://placehold.co/50x50/324A80.png'
+                }
                 alt={`${agent.name} logo`}
                 width={50}
                 height={50}

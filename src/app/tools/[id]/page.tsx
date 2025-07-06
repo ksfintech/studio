@@ -43,7 +43,11 @@ export default async function AgentDetailPage({
             <div className="flex items-start gap-4 mb-4">
               {agent.logoUrl && (
                 <Image
-                  src={agent.logoUrl}
+                  src={
+                    agent.logoUrl.startsWith('http')
+                      ? agent.logoUrl
+                      : 'https://placehold.co/64x64/324A80.png'
+                  }
                   alt={`${agent.name} logo`}
                   width={64}
                   height={64}
