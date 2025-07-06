@@ -1,7 +1,7 @@
+
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import type { Agent } from '@/lib/definitions';
 import {
   Card,
@@ -45,26 +45,8 @@ export function AgentCard({ agent }: AgentCardProps) {
 
         {/* Card Header and Content are clickable due to the overlay link */}
         <CardHeader>
-          <div className="flex items-center gap-4">
-            {agent.logoUrl && (
-              <Image
-                src={
-                  agent.logoUrl.startsWith('http')
-                    ? agent.logoUrl
-                    : 'https://placehold.co/50x50/324A80.png'
-                }
-                alt={`${agent.name} logo`}
-                width={50}
-                height={50}
-                className="rounded-lg border bg-white p-1"
-                data-ai-hint="logo"
-              />
-            )}
-            <div className="flex-1">
-              <CardTitle className="text-lg">{agent.name}</CardTitle>
-              <CardDescription>{agent.company}</CardDescription>
-            </div>
-          </div>
+          <CardTitle className="text-lg">{agent.name}</CardTitle>
+          <CardDescription>{agent.company}</CardDescription>
         </CardHeader>
         <CardContent className="flex-1">
           <p className="text-sm text-muted-foreground line-clamp-3">
@@ -93,26 +75,8 @@ export function AgentCard({ agent }: AgentCardProps) {
               </DialogTrigger>
               <DialogContent className="sm:max-w-[625px]">
                 <DialogHeader>
-                  <div className="flex items-start gap-4">
-                    {agent.logoUrl && (
-                      <Image
-                        src={
-                          agent.logoUrl.startsWith('http')
-                            ? agent.logoUrl
-                            : 'https://placehold.co/64x64/324A80.png'
-                        }
-                        alt={`${agent.name} logo`}
-                        width={64}
-                        height={64}
-                        className="rounded-xl border bg-white p-1"
-                        data-ai-hint="logo"
-                      />
-                    )}
-                    <div className="flex-1 pt-1">
-                      <DialogTitle className="text-2xl">{agent.name}</DialogTitle>
-                      <DialogDescription>by {agent.company}</DialogDescription>
-                    </div>
-                  </div>
+                  <DialogTitle className="text-2xl">{agent.name}</DialogTitle>
+                  <DialogDescription>by {agent.company}</DialogDescription>
                 </DialogHeader>
                 <div className="py-4 space-y-6 max-h-[60vh] overflow-y-auto pr-6 -mr-6">
                   <div>

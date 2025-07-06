@@ -1,6 +1,5 @@
 
 import Link from 'next/link';
-import Image from 'next/image';
 import type { Agent } from '@/lib/definitions';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -22,44 +21,24 @@ export function FeaturedAgent({ agent }: FeaturedAgentProps) {
           <span>Featured</span>
         </Badge>
       </div>
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-        <div className="flex items-center justify-center md:col-span-1">
-          {agent.logoUrl && (
-            <Image
-              src={
-                agent.logoUrl.startsWith('http')
-                  ? agent.logoUrl
-                  : 'https://placehold.co/150x150/324A80.png'
-              }
-              alt={`${agent.name} logo`}
-              width={150}
-              height={150}
-              className="rounded-2xl border bg-white p-2"
-              data-ai-hint="logo"
-            />
-          )}
-        </div>
-        <div className="md:col-span-2">
-          <h3 className="text-3xl font-bold text-primary">{agent.name}</h3>
-          <p className="mt-1 text-muted-foreground">by {agent.company}</p>
-          <div className="my-4 flex flex-wrap gap-2">
-            {agent.category.map(cat => (
-              <Badge key={cat} variant="secondary">
-                {cat}
-              </Badge>
-            ))}
-          </div>
-          <p className="mt-4 leading-relaxed text-foreground/80">
-            {agent.accomplishment}
-          </p>
-          <div className="mt-6">
-            <Button asChild size="lg">
-              <Link href={`/tools/${agent.id}`}>
-                Learn More <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </Button>
-          </div>
-        </div>
+      <h3 className="text-3xl font-bold text-primary">{agent.name}</h3>
+      <p className="mt-1 text-muted-foreground">by {agent.company}</p>
+      <div className="my-4 flex flex-wrap gap-2">
+        {agent.category.map(cat => (
+          <Badge key={cat} variant="secondary">
+            {cat}
+          </Badge>
+        ))}
+      </div>
+      <p className="mt-4 leading-relaxed text-foreground/80">
+        {agent.accomplishment}
+      </p>
+      <div className="mt-6">
+        <Button asChild size="lg">
+          <Link href={`/tools/${agent.id}`}>
+            Learn More <ArrowRight className="ml-2 h-5 w-5" />
+          </Link>
+        </Button>
       </div>
     </div>
   );
