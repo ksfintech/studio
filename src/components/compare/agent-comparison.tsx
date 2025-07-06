@@ -18,7 +18,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
 import { Button } from '../ui/button';
 import Image from 'next/image';
@@ -60,41 +59,38 @@ export function AgentComparison({ agents, categories }: AgentComparisonProps) {
       </div>
 
       {selectedCategory && filteredAgents.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Comparison for: {selectedCategory}</CardTitle>
-          </CardHeader>
-          <CardContent className="overflow-x-auto">
-            <Table>
+        <div className="overflow-hidden rounded-lg border">
+          <div className="overflow-x-auto">
+            <Table className="min-w-full">
               <TableHeader>
-                <TableRow>
-                  <TableHead className="min-w-[200px]">Agent</TableHead>
-                  <TableHead className="min-w-[250px]">Summary</TableHead>
-                  <TableHead className="min-w-[350px]">Best Suited For</TableHead>
-                  <TableHead className="min-w-[300px]">Key Features</TableHead>
+                <TableRow className="bg-muted/30 hover:bg-muted/30">
+                  <TableHead className="min-w-[250px] p-6 font-semibold text-foreground">Agent</TableHead>
+                  <TableHead className="min-w-[300px] p-6 font-semibold text-foreground">Summary</TableHead>
+                  <TableHead className="min-w-[400px] p-6 font-semibold text-foreground">Best Suited For</TableHead>
+                  <TableHead className="min-w-[350px] p-6 font-semibold text-foreground">Key Features</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredAgents.map(agent => (
-                  <TableRow key={agent.id}>
+                  <TableRow key={agent.id} className="[&_td]:p-6">
                     <TableCell className="font-medium align-top">
-                      <div className="flex items-start gap-3">
+                      <div className="flex items-start gap-4">
                         {agent.logoUrl && (
                           <Image
                             src={
                               agent.logoUrl.startsWith('http')
                                 ? agent.logoUrl
-                                : 'https://placehold.co/40x40/324A80.png'
+                                : 'https://placehold.co/48x48/324A80.png'
                             }
                             alt={`${agent.name} logo`}
-                            width={40}
-                            height={40}
-                            className="rounded-md border bg-white p-1"
+                            width={48}
+                            height={48}
+                            className="rounded-lg border bg-white p-1"
                             data-ai-hint="logo"
                           />
                         )}
                         <div className="flex-1">
-                          <Button asChild variant="link" className="p-0 h-auto font-semibold text-base">
+                          <Button asChild variant="link" className="p-0 h-auto font-semibold text-lg">
                             <Link href={`/tools/${agent.id}`}>{agent.name}</Link>
                           </Button>
                           <p className="text-sm text-muted-foreground">
@@ -123,8 +119,8 @@ export function AgentComparison({ agents, categories }: AgentComparisonProps) {
                 ))}
               </TableBody>
             </Table>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
 
       {selectedCategory && filteredAgents.length === 0 && (
