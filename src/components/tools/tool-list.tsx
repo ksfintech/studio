@@ -100,6 +100,13 @@ export function AgentList({
         </div>
       )}
 
+      <div className="mb-6">
+        <h2 className="text-2xl font-semibold">All Agents</h2>
+        <p className="text-muted-foreground text-sm mt-1">
+          Showing {filteredAgents.length} of {agents.length} agents.
+        </p>
+      </div>
+
       {filteredAgents.length > 0 ? (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredAgents.map(agent => (

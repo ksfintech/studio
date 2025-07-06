@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import Image from 'next/image';
 import type { Agent } from '@/lib/definitions';
@@ -20,7 +21,7 @@ interface AgentCardProps {
 export function AgentCard({ agent }: AgentCardProps) {
   return (
     <div className="relative group/card h-full">
-      <Card className="h-full flex flex-col transition-all duration-300 group-hover/card:shadow-xl group-hover/card:border-primary/50 group-hover/card:-translate-y-1 bg-card">
+      <Card className="h-full flex flex-col transition-all duration-300 group-hover/card:shadow-xl group-hover/card:border-primary group-hover/card:-translate-y-1 bg-card">
         <Link
           href={`/tools/${agent.id}`}
           className="absolute inset-0 z-0"
