@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import type { Tool } from '@/lib/definitions';
 import { Loader2 } from 'lucide-react';
-import { MultiSelect } from '@/components/ui/multi-select';
+import { MultiSelect, type MultiSelectOption } from '@/components/ui/multi-select';
 
 interface SetFeaturedToolsFormProps {
   tools: Tool[];
@@ -43,18 +43,12 @@ export function SetFeaturedToolForm({
     });
   };
 
-  const toolOptions = tools.map(t => t.name).sort();
-
-  const selectedToolNames = selectedToolIds
-    .map(id => tools.find(tool => tool.id === id)?.name)
-    .filter((name): name is string => !!name);
-
-  const handleSelectionChange = (newSelectedNames: string[]) => {
-    const newSelectedIds = newSelectedNames
-      .map(name => tools.find(tool => tool.name === name)?.id)
-      .filter((id): id is string => !!id);
-    setSelectedToolIds(newSelectedIds);
-  };
+  const toolOptions: MultiSelectOption[] = tools
+    .map(tool => ({
+      value: tool.id,
+      label: tool.name,
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label));
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -67,8 +61,8 @@ export function SetFeaturedToolForm({
         </label>
         <MultiSelect
           options={toolOptions}
-          selected={selectedToolNames}
-          onChange={handleSelectionChange}
+          selected={selectedToolIds}
+          onChange={setSelectedToolIds}
           placeholder="Select tools to feature..."
           className="w-full"
         />

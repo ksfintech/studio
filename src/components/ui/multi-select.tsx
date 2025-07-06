@@ -1,4 +1,3 @@
-
 'use client';
 
 import * as React from 'react';
@@ -20,8 +19,13 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 
+export type MultiSelectOption = {
+  value: string;
+  label: string;
+};
+
 interface MultiSelectProps {
-  options: string[];
+  options: MultiSelectOption[];
   selected: string[];
   onChange: (selected: string[]) => void;
   className?: string;
@@ -39,21 +43,25 @@ export function MultiSelect({
 
   const selectedSet = React.useMemo(() => new Set(selected), [selected]);
 
-  const handleSelect = (option: string) => {
+  const handleSelect = (value: string) => {
     const newSelectedSet = new Set(selectedSet);
-    if (newSelectedSet.has(option)) {
-      newSelectedSet.delete(option);
+    if (newSelectedSet.has(value)) {
+      newSelectedSet.delete(value);
     } else {
-      newSelectedSet.add(option);
+      newSelectedSet.add(value);
     }
     onChange(Array.from(newSelectedSet));
   };
 
-  const handleRemove = (option: string) => {
+  const handleRemove = (value: string) => {
     const newSelectedSet = new Set(selectedSet);
-    newSelectedSet.delete(option);
+    newSelectedSet.delete(value);
     onChange(Array.from(newSelectedSet));
   };
+  
+  const getLabel = (value: string) => {
+    return options.find(option => option.value === value)?.label || value;
+  }
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -66,17 +74,17 @@ export function MultiSelect({
         >
           <div className="flex gap-1 flex-wrap">
             {selected.length > 0 ? (
-              selected.map(item => (
+              selected.map(value => (
                 <Badge
                   variant="secondary"
-                  key={item}
+                  key={value}
                   className="mr-1"
                   onClick={e => {
                     e.stopPropagation();
-                    handleRemove(item);
+                    handleRemove(value);
                   }}
                 >
-                  {item}
+                  {getLabel(value)}
                   <X className="h-3 w-3 ml-1" />
                 </Badge>
               ))
@@ -95,17 +103,17 @@ export function MultiSelect({
             <CommandGroup>
               {options.map(option => (
                 <CommandItem
-                  key={option}
-                  onSelect={() => handleSelect(option)}
-                  value={option}
+                  key={option.value}
+                  onSelect={() => handleSelect(option.value)}
+                  value={option.value}
                 >
                   <Check
                     className={cn(
                       'mr-2 h-4 w-4',
-                      selectedSet.has(option) ? 'opacity-100' : 'opacity-0'
+                      selectedSet.has(option.value) ? 'opacity-100' : 'opacity-0'
                     )}
                   />
-                  {option}
+                  {option.label}
                 </CommandItem>
               ))}
             </CommandGroup>

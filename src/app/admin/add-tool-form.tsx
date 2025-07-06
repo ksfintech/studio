@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
-import { MultiSelect } from '@/components/ui/multi-select';
+import { MultiSelect, type MultiSelectOption } from '@/components/ui/multi-select';
 import { generateToolDetails } from '@/ai/flows/generate-tool-details';
 import { Wand2, Loader2 } from 'lucide-react';
 
@@ -137,6 +137,11 @@ export function AddToolForm({
     }
   }
 
+  const categoryOptions: MultiSelectOption[] = allCategories.map(category => ({
+    value: category,
+    label: category,
+  }));
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -212,7 +217,7 @@ export function AddToolForm({
               <FormLabel>Categories</FormLabel>
               <FormControl>
                 <MultiSelect
-                  options={allCategories}
+                  options={categoryOptions}
                   selected={field.value}
                   onChange={field.onChange}
                   placeholder="Select categories..."

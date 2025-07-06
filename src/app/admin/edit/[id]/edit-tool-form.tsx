@@ -21,7 +21,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import type { Tool } from '@/lib/definitions';
 import { Loader2 } from 'lucide-react';
-import { MultiSelect } from '@/components/ui/multi-select';
+import { MultiSelect, type MultiSelectOption } from '@/components/ui/multi-select';
 
 const FormSchema = z.object({
   id: z.string(),
@@ -90,6 +90,11 @@ export function EditToolForm({
     }
   }
 
+  const categoryOptions: MultiSelectOption[] = allCategories.map(category => ({
+    value: category,
+    label: category,
+  }));
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -134,7 +139,7 @@ export function EditToolForm({
               <FormLabel>Categories</FormLabel>
               <FormControl>
                 <MultiSelect
-                  options={allCategories}
+                  options={categoryOptions}
                   selected={field.value}
                   onChange={field.onChange}
                   placeholder="Select categories..."
