@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -12,13 +13,32 @@ import {
 } from '@/components/ui/select';
 import { AgentCard } from './tool-card';
 import { Search } from 'lucide-react';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel';
+import { FeaturedAgent } from './featured-tool';
 
 interface AgentListProps {
   agents: Agent[];
   categories: string[];
+  featuredAgents: Agent[];
 }
 
-export function AgentList({ agents, categories }: AgentListProps) {
+export function AgentList({
+  agents,
+  categories,
+  featuredAgents,
+}: AgentListProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
 
@@ -67,6 +87,43 @@ export function AgentList({ agents, categories }: AgentListProps) {
           </Select>
         </div>
       </div>
+
+      {featuredAgents.length > 0 && (
+        <div className="mb-12">
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="featured-agents">
+              <AccordionTrigger className="text-2xl font-semibold hover:no-underline">
+                Featured Agents
+              </AccordionTrigger>
+              <AccordionContent className="pt-4">
+                <Carousel
+                  opts={{
+                    align: 'start',
+                    loop: featuredAgents.length > 1,
+                  }}
+                  className="w-full px-12"
+                >
+                  <CarouselContent>
+                    {featuredAgents.map(agent => (
+                      <CarouselItem key={agent.id}>
+                        <div className="p-1">
+                          <FeaturedAgent agent={agent} />
+                        </div>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  {featuredAgents.length > 1 && (
+                    <>
+                      <CarouselPrevious className="hidden md:flex" />
+                      <CarouselNext className="hidden md:flex" />
+                    </>
+                  )}
+                </Carousel>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </div>
+      )}
 
       {filteredAgents.length > 0 ? (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

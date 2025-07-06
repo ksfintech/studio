@@ -1,3 +1,4 @@
+
 import {
   Card,
   CardContent,
@@ -40,37 +41,5 @@ export function AgentListSkeleton() {
         <AgentCardSkeleton key={i} />
       ))}
     </div>
-  );
-}
-
-export function FeaturedAgentSkeleton() {
-  return (
-    <section>
-      <div className="mb-8 space-y-4 text-center">
-        <Skeleton className="h-10 w-1/2 mx-auto" />
-        <Skeleton className="h-6 w-3/4 mx-auto" />
-      </div>
-      <div className="relative rounded-xl border bg-card p-6 sm:p-8">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-          <div className="flex items-center justify-center md:col-span-1">
-            <Skeleton className="h-[150px] w-[150px] rounded-2xl" />
-          </div>
-          <div className="md:col-span-2 space-y-4">
-            <Skeleton className="h-8 w-1/2" />
-            <Skeleton className="h-4 w-1/4" />
-            <div className="flex flex-wrap gap-2">
-              <Skeleton className="h-6 w-20 rounded-full" />
-              <Skeleton className="h-6 w-24 rounded-full" />
-            </div>
-            <div className="space-y-2">
-              <Skeleton className="h-5 w-full" />
-              <Skeleton className="h-5 w-full" />
-              <Skeleton className="h-5 w-3/4" />
-            </div>
-            <Skeleton className="h-12 w-40 rounded-md" />
-          </div>
-        </div>
-      </div>
-    </section>
   );
 }
