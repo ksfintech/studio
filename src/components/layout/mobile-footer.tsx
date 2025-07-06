@@ -3,12 +3,13 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutGrid, Lightbulb } from 'lucide-react';
+import { LayoutGrid, Lightbulb, GitCompareArrows } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
   { href: '/', label: 'Agents', icon: LayoutGrid },
   { href: '/insights', label: 'Insights', icon: Lightbulb },
+  { href: '/compare', label: 'Compare', icon: GitCompareArrows },
 ];
 
 export function MobileFooter() {
