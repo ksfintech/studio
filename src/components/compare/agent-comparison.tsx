@@ -68,9 +68,10 @@ export function AgentComparison({ agents, categories }: AgentComparisonProps) {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="min-w-[250px]">Agent</TableHead>
-                  <TableHead className="min-w-[300px]">Description</TableHead>
-                  <TableHead className="min-w-[350px]">Key Features</TableHead>
+                  <TableHead className="min-w-[200px]">Agent</TableHead>
+                  <TableHead className="min-w-[250px]">Summary</TableHead>
+                  <TableHead className="min-w-[350px]">Best Suited For</TableHead>
+                  <TableHead className="min-w-[300px]">Key Features</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -104,6 +105,9 @@ export function AgentComparison({ agents, categories }: AgentComparisonProps) {
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground align-top">
                       {agent.description}
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground align-top">
+                      {agent.accomplishment}
                     </TableCell>
                     <TableCell className="align-top">
                       <ul className="space-y-2">

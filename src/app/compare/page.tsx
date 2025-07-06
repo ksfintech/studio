@@ -6,7 +6,7 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Compare AI Agents | AIFinTechInsights.com',
   description:
-    'Compare different AI fintech agents side-by-side based on their category and features.',
+    'Compare different AI fintech agents side-by-side based on their category, primary use cases, and features.',
 };
 
 export default async function ComparePage() {
@@ -22,7 +22,7 @@ export default async function ComparePage() {
           Compare AI Agents
         </h1>
         <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
-          Select a category to see a side-by-side comparison of agents and their key features.
+          Select a category to see a side-by-side comparison of agents, their primary use cases, and key features.
         </p>
       </div>
       <AgentComparison agents={agents} categories={categories} />
