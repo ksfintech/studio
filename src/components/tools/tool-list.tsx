@@ -19,13 +19,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from '@/components/ui/carousel';
 import { FeaturedAgent } from './featured-tool';
 
 interface AgentListProps {
@@ -96,29 +89,11 @@ export function AgentList({
                 Featured Agents
               </AccordionTrigger>
               <AccordionContent className="pt-4">
-                <Carousel
-                  opts={{
-                    align: 'start',
-                    loop: featuredAgents.length > 1,
-                  }}
-                  className="w-full px-12"
-                >
-                  <CarouselContent>
-                    {featuredAgents.map(agent => (
-                      <CarouselItem key={agent.id}>
-                        <div className="p-1">
-                          <FeaturedAgent agent={agent} />
-                        </div>
-                      </CarouselItem>
-                    ))}
-                  </CarouselContent>
-                  {featuredAgents.length > 1 && (
-                    <>
-                      <CarouselPrevious className="hidden md:flex" />
-                      <CarouselNext className="hidden md:flex" />
-                    </>
-                  )}
-                </Carousel>
+                <div className="space-y-6">
+                  {featuredAgents.map(agent => (
+                    <FeaturedAgent key={agent.id} agent={agent} />
+                  ))}
+                </div>
               </AccordionContent>
             </AccordionItem>
           </Accordion>
