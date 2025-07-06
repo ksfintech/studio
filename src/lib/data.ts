@@ -20,16 +20,16 @@ import {
 import type { Agent, Insight } from './definitions';
 
 // --- Featured Agent ---
-const FEATURED_AGENT_DOC_REF = doc(db, 'app_config', 'featured_tool');
+const FEATURED_AGENT_DOC_REF = doc(db, 'app_config', 'featured_agent');
 
 export async function setFeaturedAgents(agentIds: string[]): Promise<void> {
-  await setDoc(FEATURED_AGENT_DOC_REF, { toolIds: agentIds });
+  await setDoc(FEATURED_AGENT_DOC_REF, { agentIds: agentIds });
 }
 
 export async function getFeaturedAgentIds(): Promise<string[]> {
   const docSnap = await getDoc(FEATURED_AGENT_DOC_REF);
   if (docSnap.exists()) {
-    return docSnap.data().toolIds ?? [];
+    return docSnap.data().agentIds ?? [];
   }
   return [];
 }
@@ -37,22 +37,22 @@ export async function getFeaturedAgentIds(): Promise<string[]> {
 // --- Agents ---
 
 export async function updateAgent(id: string, agentData: Omit<Agent, 'id'>): Promise<void> {
-  const docRef = doc(db, 'tools', id);
+  const docRef = doc(db, 'agents', id);
   await setDoc(docRef, agentData);
 }
 
 export async function deleteAgent(id: string): Promise<void> {
-  const agentDocRef = doc(db, 'tools', id);
-  const featuredDocRef = doc(db, 'app_config', 'featured_tool');
+  const agentDocRef = doc(db, 'agents', id);
+  const featuredDocRef = doc(db, 'app_config', 'featured_agent');
 
   await runTransaction(db, async (transaction) => {
     // This transaction is atomic.
     const featuredSnap = await transaction.get(featuredDocRef);
     if (featuredSnap.exists()) {
-      const featuredIds = featuredSnap.data().toolIds || [];
+      const featuredIds = featuredSnap.data().agentIds || [];
       if (featuredIds.includes(id)) {
         const newFeaturedIds = featuredIds.filter((agentId: string) => agentId !== id);
-        transaction.update(featuredDocRef, { toolIds: newFeaturedIds });
+        transaction.update(featuredDocRef, { agentIds: newFeaturedIds });
       }
     }
     transaction.delete(agentDocRef);
@@ -67,10 +67,10 @@ export async function addAgent(agentData: Omit<Agent, 'id'>): Promise<Agent> {
 
   const newAgentData = {
     ...agentData,
-    logoUrl: agentData.logoUrl || 'https://placehold.co/100x100/3B82F6/FFFFFF.png',
+    logoUrl: agentData.logoUrl || 'https://placehold.co/100x100/324A80.png',
   };
 
-  const docRef = doc(db, 'tools', id);
+  const docRef = doc(db, 'agents', id);
   // We don't store the ID in the document itself, only use it as the document ID.
   await setDoc(docRef, newAgentData);
 
@@ -78,7 +78,7 @@ export async function addAgent(agentData: Omit<Agent, 'id'>): Promise<Agent> {
 }
 
 export async function getAgents(): Promise<Agent[]> {
-  const agentsCollection = collection(db, 'tools');
+  const agentsCollection = collection(db, 'agents');
   const agentSnapshot = await getDocs(agentsCollection);
 
   if (agentSnapshot.empty) {
@@ -86,7 +86,7 @@ export async function getAgents(): Promise<Agent[]> {
     const batch = writeBatch(db);
     initialAgents.forEach(agent => {
       const { id, ...agentData } = agent;
-      const docRef = doc(db, 'tools', id);
+      const docRef = doc(db, 'agents', id);
       batch.set(docRef, agentData);
     });
     await batch.commit();
@@ -105,7 +105,7 @@ export async function getAgents(): Promise<Agent[]> {
 }
 
 export async function getAgentById(id: string): Promise<Agent | undefined> {
-  const docRef = doc(db, 'tools', id);
+  const docRef = doc(db, 'agents', id);
   const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {
@@ -150,7 +150,7 @@ export async function addInsight(insightData: Omit<Insight, 'id'>): Promise<Insi
 
   const newInsightData = {
     ...insightData,
-    imageUrl: insightData.imageUrl || 'https://placehold.co/1200x630/3B82F6/FFFFFF.png',
+    imageUrl: insightData.imageUrl || 'https://placehold.co/1200x630/324A80.png',
   };
   
   const docRef = doc(db, 'insights', id);

@@ -16,7 +16,7 @@ export const AGENTS: Agent[] = [
     ],
     company: 'Feedzai',
     websiteUrl: 'https://feedzai.com/',
-    logoUrl: 'https://placehold.co/100x100/3B82F6/FFFFFF.png',
+    logoUrl: 'https://placehold.co/100x100/324A80.png',
   },
   {
     id: 'zest-ai',
@@ -33,7 +33,7 @@ export const AGENTS: Agent[] = [
     ],
     company: 'Zest AI',
     websiteUrl: 'https://www.zest.ai/',
-    logoUrl: 'https://placehold.co/100x100/3B82F6/FFFFFF.png',
+    logoUrl: 'https://placehold.co/100x100/324A80.png',
   },
   {
     id: 'upstart',
@@ -50,7 +50,7 @@ export const AGENTS: Agent[] = [
     ],
     company: 'Upstart Network, Inc.',
     websiteUrl: 'https://www.upstart.com/',
-    logoUrl: 'https://placehold.co/100x100/3B82F6/FFFFFF.png',
+    logoUrl: 'https://placehold.co/100x100/324A80.png',
   },
   {
     id: 'betterment',
@@ -67,7 +67,7 @@ export const AGENTS: Agent[] = [
     ],
     company: 'Betterment',
     websiteUrl: 'https://www.betterment.com/',
-    logoUrl: 'https://placehold.co/100x100/3B82F6/FFFFFF.png',
+    logoUrl: 'https://placehold.co/100x100/324A80.png',
   },
   {
     id: 'darktrace',
@@ -84,7 +84,7 @@ export const AGENTS: Agent[] = [
     ],
     company: 'Darktrace',
     websiteUrl: 'https://www.darktrace.com/',
-    logoUrl: 'https://placehold.co/100x100/3B82F6/FFFFFF.png',
+    logoUrl: 'https://placehold.co/100x100/324A80.png',
   },
   {
     id: 'kensho',
@@ -101,7 +101,7 @@ export const AGENTS: Agent[] = [
     ],
     company: 'S&P Global',
     websiteUrl: 'https://www.kensho.com/',
-    logoUrl: 'https://placehold.co/100x100/3B82F6/FFFFFF.png',
+    logoUrl: 'https://placehold.co/100x100/324A80.png',
   },
   {
     id: 'alpaca',
@@ -118,7 +118,7 @@ export const AGENTS: Agent[] = [
     ],
     company: 'AlpacaDB, Inc.',
     websiteUrl: 'https://alpaca.markets/',
-    logoUrl: 'https://placehold.co/100x100/3B82F6/FFFFFF.png',
+    logoUrl: 'https://placehold.co/100x100/324A80.png',
   },
   {
     id: 'kasisto-kai',
@@ -135,7 +135,7 @@ export const AGENTS: Agent[] = [
     ],
     company: 'Kasisto',
     websiteUrl: 'https://kasisto.com/',
-    logoUrl: 'https://placehold.co/100x100/3B82F6/FFFFFF.png',
+    logoUrl: 'https://placehold.co/100x100/324A80.png',
   },
   {
     id: 'c3-ai-aml',
@@ -152,7 +152,7 @@ export const AGENTS: Agent[] = [
     ],
     company: 'C3.ai',
     websiteUrl: 'https://c3.ai/products/c3-ai-anti-money-laundering/',
-    logoUrl: 'https://placehold.co/100x100/3B82F6/FFFFFF.png',
+    logoUrl: 'https://placehold.co/100x100/324A80.png',
   },
   {
     id: 'personetics',
@@ -169,7 +169,7 @@ export const AGENTS: Agent[] = [
     ],
     company: 'Personetics',
     websiteUrl: 'https://personetics.com/',
-    logoUrl: 'https://placehold.co/100x100/3B82F6/FFFFFF.png',
+    logoUrl: 'https://placehold.co/100x100/324A80.png',
   },
   {
     id: 'numerai',
@@ -186,7 +186,7 @@ export const AGENTS: Agent[] = [
     ],
     company: 'Numerai',
     websiteUrl: 'https://numer.ai/',
-    logoUrl: 'https://placehold.co/100x100/3B82F6/FFFFFF.png',
+    logoUrl: 'https://placehold.co/100x100/324A80.png',
   },
   {
     id: 'highradius',
@@ -203,7 +203,7 @@ export const AGENTS: Agent[] = [
     ],
     company: 'HighRadius',
     websiteUrl: 'https://www.highradius.com/',
-    logoUrl: 'https://placehold.co/100x100/3B82F6/FFFFFF.png',
+    logoUrl: 'https://placehold.co/100x100/324A80.png',
   },
   {
     id: 'addepar',
@@ -220,7 +220,7 @@ export const AGENTS: Agent[] = [
     ],
     company: 'Addepar',
     websiteUrl: 'https://addepar.com/',
-    logoUrl: 'https://placehold.co/100x100/3B82F6/FFFFFF.png',
+    logoUrl: 'https://placehold.co/100x100/324A80.png',
   },
   {
     id: 'signifyd',
@@ -237,7 +237,7 @@ export const AGENTS: Agent[] = [
     ],
     company: 'Signifyd',
     websiteUrl: 'https://www.signifyd.com/',
-    logoUrl: 'https://placehold.co/100x100/3B82F6/FFFFFF.png',
+    logoUrl: 'https://placehold.co/100x100/324A80.png',
   },
   {
     id: 'mx-technologies',
@@ -254,7 +254,7 @@ export const AGENTS: Agent[] = [
     ],
     company: 'MX Technologies Inc.',
     websiteUrl: 'https://www.mx.com/',
-    logoUrl: 'https://placehold.co/100x100/3B82F6/FFFFFF.png',
+    logoUrl: 'https://placehold.co/100x100/324A80.png',
   },
 ];
 
@@ -270,7 +270,7 @@ export const INSIGHTS: Insight[] = [
       <h3 class="text-xl font-semibold mt-6 mb-2">Transparency with Explainable AI (XAI)</h3>
       <p>A key challenge with complex AI models is their "black box" nature. However, the rise of Explainable AI (XAI) is addressing this. Tools like Zest AI provide clear, human-readable explanations for every credit decision, ensuring that lenders can meet regulatory requirements for transparency and consumers can understand why they were approved or denied. This fosters trust and accountability in the lending process.</p>
     `,
-    imageUrl: 'https://placehold.co/1200x630/3B82F6/FFFFFF.png',
+    imageUrl: 'https://placehold.co/1200x630/324A80.png',
   },
   {
     id: 'robo-advisors-future',
@@ -279,11 +279,11 @@ export const INSIGHTS: Insight[] = [
     content: `
       <p class="mb-4">The world of wealth management, once an exclusive domain for high-net-worth individuals, is undergoing a radical transformation thanks to AI-powered robo-advisors. These digital platforms provide automated, algorithm-driven financial planning services with little to no human supervision, making sophisticated investing strategies available to everyone.</p>
       <h3 class="text-xl font-semibold mt-6 mb-2">Democratizing Access</h3>
-      <p class="mb-4">Platforms like Betterment and Wealthfront use AI to assess a user's risk tolerance and financial goals through simple online questionnaires. Based on this information, they construct and manage a diversified portfolio of low-cost ETFs. By automating this process, they can offer their services for a fraction of the cost of traditional human advisors, often with no or very low account minimums.</p>
+      <p class="mb-4">Platforms like Betterment and Wealthfront use AI to assess a user's risk tolerance and financial goals through simple online questionnaires. Based on this information, they construct and manage a diversified portfolio of low-cost ETFs. By automating this process, they can offer their services for a fraction of the cost of a traditional human advisors, often with no or very low account minimums.</p>
       <h3 class="text-xl font-semibold mt-6 mb-2">Behavioral Coaching and Automation</h3>
       <p>Beyond portfolio construction, AI excels at tasks that require discipline and consistency. Robo-advisors automatically handle portfolio rebalancing and tax-loss harvesting, strategies that maximize returns but are often neglected by individual investors. Furthermore, by providing data-driven advice and preventing emotion-fueled decisions during market volatility, these platforms act as behavioral coaches, helping investors stay focused on their long-term goals.</p>
     `,
-    imageUrl: 'https://placehold.co/1200x630/3B82F6/FFFFFF.png',
+    imageUrl: 'https://placehold.co/1200x630/324A80.png',
   },
   {
     id: 'fighting-financial-crime',
@@ -296,7 +296,7 @@ export const INSIGHTS: Insight[] = [
       <h3 class="text-xl font-semibold mt-6 mb-2">Reducing False Positives</h3>
       <p>A major pain point for legacy systems is the high number of false positives—legitimate transactions incorrectly flagged as suspicious. This frustrates customers and wastes investigators' time. By learning individual behavioral patterns, AI models drastically reduce these false alarms, allowing compliance teams to focus their resources on genuine threats and high-risk cases.</p>
     `,
-    imageUrl: 'https://placehold.co/1200x630/3B82F6/FFFFFF.png',
+    imageUrl: 'https://placehold.co/1200x630/324A80.png',
   },
   {
     id: 'ai-personalized-banking',
@@ -309,7 +309,7 @@ export const INSIGHTS: Insight[] = [
       <h3 class="text-xl font-semibold mt-6 mb-2">Conversational Banking</h3>
       <p>Conversational AI, in the form of intelligent chatbots and virtual assistants like Kasisto's KAI, is another cornerstone of personalization. These AI assistants can handle a wide range of customer queries 24/7, from checking account balances to executing payments. They understand natural language, learn from past interactions, and can provide a seamless, human-like service experience, freeing up human agents to handle more complex issues.</p>
     `,
-    imageUrl: 'https://placehold.co/1200x630/3B82F6/FFFFFF.png',
+    imageUrl: 'https://placehold.co/1200x630/324A80.png',
   },
   {
     id: 'regtech-ai',
@@ -322,7 +322,7 @@ export const INSIGHTS: Insight[] = [
       <h3 class="text-xl font-semibold mt-6 mb-2">Enhancing Reporting and Auditing</h3>
       <p>AI also streamlines regulatory reporting and auditing. It can automatically aggregate data from various systems, populate required report templates, and create detailed audit trails. This not only saves thousands of hours of manual work but also improves the accuracy of regulatory submissions, reducing the risk of non-compliance penalties.</p>
     `,
-    imageUrl: 'https://placehold.co/1200x630/3B82F6/FFFFFF.png',
+    imageUrl: 'https://placehold.co/1200x630/324A80.png',
   }
 ];
 
