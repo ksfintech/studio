@@ -2,7 +2,7 @@
 'use server';
 
 import { z } from 'zod';
-import { addTool, updateTool, setFeaturedTools } from '@/lib/data';
+import { addTool, updateTool, setFeaturedTools, deleteTool } from '@/lib/data';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import type { Tool } from '@/lib/definitions';
@@ -86,6 +86,24 @@ export async function setFeaturedToolsAction(toolIds: string[]) {
     return {
       success: false,
       message: 'Database error: Failed to set featured tools.',
+    };
+  }
+}
+
+export async function deleteToolAction(id: string) {
+  if (!id) {
+    return { success: false, message: 'Tool ID is required.' };
+  }
+  try {
+    await deleteTool(id);
+    revalidatePath('/');
+    revalidatePath('/admin/tools');
+    return { success: true, message: 'Tool deleted successfully.' };
+  } catch (error) {
+    console.error('Failed to delete tool:', error);
+    return {
+      success: false,
+      message: 'Database error: Failed to delete tool.',
     };
   }
 }

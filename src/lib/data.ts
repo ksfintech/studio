@@ -10,6 +10,7 @@ import {
   setDoc,
   writeBatch,
   deleteDoc,
+  runTransaction,
 } from 'firebase/firestore';
 import {
   TOOLS as initialTools,
@@ -38,6 +39,24 @@ export async function getFeaturedToolIds(): Promise<string[]> {
 export async function updateTool(id: string, toolData: Omit<Tool, 'id'>): Promise<void> {
   const docRef = doc(db, 'tools', id);
   await setDoc(docRef, toolData);
+}
+
+export async function deleteTool(id: string): Promise<void> {
+  const toolDocRef = doc(db, 'tools', id);
+  const featuredDocRef = doc(db, 'app_config', 'featured_tool');
+
+  await runTransaction(db, async (transaction) => {
+    // This transaction is atomic.
+    const featuredSnap = await transaction.get(featuredDocRef);
+    if (featuredSnap.exists()) {
+      const featuredIds = featuredSnap.data().toolIds || [];
+      if (featuredIds.includes(id)) {
+        const newFeaturedIds = featuredIds.filter((toolId: string) => toolId !== id);
+        transaction.update(featuredDocRef, { toolIds: newFeaturedIds });
+      }
+    }
+    transaction.delete(toolDocRef);
+  });
 }
 
 export async function addTool(toolData: Omit<Tool, 'id'>): Promise<Tool> {

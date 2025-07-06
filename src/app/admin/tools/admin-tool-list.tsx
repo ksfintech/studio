@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Pencil, Search } from 'lucide-react';
+import { DeleteToolButton } from './delete-tool-button';
 
 interface AdminToolListProps {
   tools: Tool[];
@@ -56,6 +57,7 @@ export function AdminToolList({ tools }: AdminToolListProps) {
                     Edit
                   </Link>
                 </Button>
+                <DeleteToolButton toolId={tool.id} />
               </div>
             </div>
           ))
