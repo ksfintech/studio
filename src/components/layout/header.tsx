@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -41,7 +42,7 @@ export function Header() {
         <div className="mr-4 flex items-center">
           <Link href="/" className="flex items-center space-x-2">
             <Icons.Compass className="h-6 w-6 text-primary" />
-            <span className="font-bold sm:inline-block">
+            <span className="text-xl font-bold tracking-tight sm:inline-block">
               AIFinTechInsights.com
             </span>
           </Link>

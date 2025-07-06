@@ -11,7 +11,7 @@ export function Footer() {
           <div className="col-span-1 md:col-span-2">
             <Link href="/" className="flex items-center space-x-2 mb-4">
               <Icons.Compass className="h-6 w-6 text-primary" />
-              <span className="font-bold text-lg">AIFinTechInsights.com</span>
+              <span className="text-lg font-bold tracking-tight">AIFinTechInsights.com</span>
             </Link>
             <p className="text-muted-foreground text-sm max-w-sm">
               Your guide to the world of AI in Fintech. Discover, filter, and
