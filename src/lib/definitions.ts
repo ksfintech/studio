@@ -15,5 +15,4 @@ export type Insight = {
   title: string;
   summary: string;
   content: string;
-  imageUrl?: string;
 };

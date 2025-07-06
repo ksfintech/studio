@@ -27,7 +27,6 @@ const FormSchema = z.object({
   title: z.string().min(5, { message: 'Title must be at least 5 characters.' }),
   summary: z.string().min(10, { message: 'Summary must be at least 10 characters.' }),
   content: z.string().min(20, { message: 'Content must be at least 20 characters.' }),
-  imageUrl: z.string().url({ message: 'Please enter a valid URL.' }).optional().or(z.literal('')),
 });
 
 type FormValues = z.infer<typeof FormSchema>;
@@ -43,7 +42,6 @@ export function EditInsightForm({ insight }: { insight: Insight }) {
       title: insight.title,
       summary: insight.summary,
       content: insight.content,
-      imageUrl: insight.imageUrl || '',
     },
   });
 
@@ -108,19 +106,6 @@ export function EditInsightForm({ insight }: { insight: Insight }) {
                   value={field.value}
                   onChange={field.onChange}
                 />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="imageUrl"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Image URL (Optional)</FormLabel>
-              <FormControl>
-                <Input type="url" placeholder="https://example.com/image.png" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

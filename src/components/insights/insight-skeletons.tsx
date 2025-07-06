@@ -8,7 +8,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 function InsightCardSkeleton() {
   return (
     <Card className="h-full flex flex-col">
-      <Skeleton className="w-full h-[210px]" />
       <CardHeader>
         <Skeleton className="h-5 w-4/5" />
       </CardHeader>

@@ -12,7 +12,6 @@ const FormSchema = z.object({
   title: z.string().min(5, { message: 'Title must be at least 5 characters.' }),
   summary: z.string().min(10, { message: 'Summary must be at least 10 characters.' }),
   content: z.string().min(20, { message: 'Content must be at least 20 characters.' }),
-  imageUrl: z.string().url({ message: 'Please enter a valid URL.' }).optional().or(z.literal('')),
 });
 
 // Create
@@ -24,14 +23,9 @@ export async function createInsightAction(data: CreateInsightInput) {
   if (!validatedFields.success) {
     return { success: false, message: 'Invalid data provided.' };
   }
-  
-  const insightData: Omit<Insight, 'id'> = {
-    ...validatedFields.data,
-    imageUrl: validatedFields.data.imageUrl || undefined,
-  };
 
   try {
-    await addInsight(insightData);
+    await addInsight(validatedFields.data);
   } catch (error) {
     console.error('Failed to create insight:', error);
     return { success: false, message: 'Database error: Failed to create insight.' };
@@ -53,13 +47,9 @@ export async function updateInsightAction(data: UpdateInsightInput) {
     }
 
     const { id, ...insightContent } = validatedFields.data;
-    const insightData: Omit<Insight, 'id'> = {
-        ...insightContent,
-        imageUrl: validatedFields.data.imageUrl || undefined,
-    };
 
     try {
-        await updateInsight(id, insightData);
+        await updateInsight(id, insightContent);
     } catch (error) {
         console.error('Failed to update insight:', error);
         return { success: false, message: 'Database error: Failed to update insight.' };

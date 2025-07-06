@@ -67,7 +67,7 @@ export async function addAgent(agentData: Omit<Agent, 'id'>): Promise<Agent> {
 
   const newAgentData = {
     ...agentData,
-    logoUrl: agentData.logoUrl || 'https://placehold.co/100x100/324A80.png',
+    logoUrl: agentData.logoUrl || undefined,
   };
 
   const docRef = doc(db, 'agents', id);
@@ -147,16 +147,11 @@ export async function addInsight(insightData: Omit<Insight, 'id'>): Promise<Insi
     .toLowerCase()
     .replace(/\s+/g, '-')
     .replace(/[^\w-]+/g, '');
-
-  const newInsightData = {
-    ...insightData,
-    imageUrl: insightData.imageUrl || 'https://placehold.co/1200x630/324A80.png',
-  };
   
   const docRef = doc(db, 'insights', id);
-  await setDoc(docRef, newInsightData);
+  await setDoc(docRef, insightData);
 
-  return { id, ...newInsightData };
+  return { id, ...insightData };
 }
 
 export async function updateInsight(id: string, insightData: Omit<Insight, 'id'>): Promise<void> {
