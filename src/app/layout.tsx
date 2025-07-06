@@ -32,7 +32,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className="font-body antialiased flex flex-col min-h-screen bg-background"
+        className="font-body antialiased flex flex-col min-h-screen"
         suppressHydrationWarning={true}
       >
         <ThemeProvider

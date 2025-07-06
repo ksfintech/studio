@@ -84,6 +84,12 @@ body {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    background-color: hsl(var(--background));
+  }
+  html.light body {
+    background-image: linear-gradient(to bottom right, hsl(54 70% 96%), hsl(33 80% 96%), hsl(340 80% 96%));
+    background-repeat: no-repeat;
+    background-attachment: fixed;
   }
 }
