@@ -2,10 +2,10 @@
 'use server';
 
 import { z } from 'zod';
-import { addTool, updateTool, setFeaturedTools, deleteTool } from '@/lib/data';
+import { addAgent, updateAgent, setFeaturedAgents, deleteAgent } from '@/lib/data';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import type { Tool } from '@/lib/definitions';
+import type { Agent } from '@/lib/definitions';
 
 const CreateFormSchema = z.object({
   name: z.string(),
@@ -20,22 +20,22 @@ const CreateFormSchema = z.object({
   logoUrl: z.string().optional(),
 });
 
-type CreateToolInput = z.infer<typeof CreateFormSchema>;
+type CreateAgentInput = z.infer<typeof CreateFormSchema>;
 
-export async function createToolAction(data: CreateToolInput) {
-  const toolData: Omit<Tool, 'id'> = {
+export async function createAgentAction(data: CreateAgentInput) {
+  const agentData: Omit<Agent, 'id'> = {
     ...data,
     features: data.features.split(',').map(s => s.trim()),
     logoUrl: data.logoUrl || undefined,
   };
 
   try {
-    await addTool(toolData);
+    await addAgent(agentData);
   } catch (error) {
-    console.error('Failed to create tool:', error);
+    console.error('Failed to create agent:', error);
     return {
       success: false,
-      message: 'Database error: Failed to create tool.',
+      message: 'Database error: Failed to create agent.',
     };
   }
 
@@ -47,23 +47,23 @@ const UpdateFormSchema = CreateFormSchema.extend({
   id: z.string(),
 });
 
-type UpdateToolInput = z.infer<typeof UpdateFormSchema>;
+type UpdateAgentInput = z.infer<typeof UpdateFormSchema>;
 
-export async function updateToolAction(data: UpdateToolInput) {
-  const { id, ...toolContent } = data;
-  const toolData: Omit<Tool, 'id'> = {
-    ...toolContent,
+export async function updateAgentAction(data: UpdateAgentInput) {
+  const { id, ...agentContent } = data;
+  const agentData: Omit<Agent, 'id'> = {
+    ...agentContent,
     features: data.features.split(',').map(s => s.trim()),
     logoUrl: data.logoUrl || undefined,
   };
 
   try {
-    await updateTool(id, toolData);
+    await updateAgent(id, agentData);
   } catch (error) {
-    console.error('Failed to update tool:', error);
+    console.error('Failed to update agent:', error);
     return {
       success: false,
-      message: 'Database error: Failed to update tool.',
+      message: 'Database error: Failed to update agent.',
     };
   }
 
@@ -73,37 +73,37 @@ export async function updateToolAction(data: UpdateToolInput) {
   redirect('/admin');
 }
 
-export async function setFeaturedToolsAction(toolIds: string[]) {
+export async function setFeaturedAgentsAction(agentIds: string[]) {
   try {
-    await setFeaturedTools(toolIds);
+    await setFeaturedAgents(agentIds);
     revalidatePath('/');
     return {
       success: true,
-      message: 'Featured tools updated successfully.',
+      message: 'Featured agents updated successfully.',
     };
   } catch (error) {
-    console.error('Failed to set featured tools:', error);
+    console.error('Failed to set featured agents:', error);
     return {
       success: false,
-      message: 'Database error: Failed to set featured tools.',
+      message: 'Database error: Failed to set featured agents.',
     };
   }
 }
 
-export async function deleteToolAction(id: string) {
+export async function deleteAgentAction(id: string) {
   if (!id) {
-    return { success: false, message: 'Tool ID is required.' };
+    return { success: false, message: 'Agent ID is required.' };
   }
   try {
-    await deleteTool(id);
+    await deleteAgent(id);
     revalidatePath('/');
     revalidatePath('/admin/tools');
-    return { success: true, message: 'Tool deleted successfully.' };
+    return { success: true, message: 'Agent deleted successfully.' };
   } catch (error) {
-    console.error('Failed to delete tool:', error);
+    console.error('Failed to delete agent:', error);
     return {
       success: false,
-      message: 'Database error: Failed to delete tool.',
+      message: 'Database error: Failed to delete agent.',
     };
   }
 }

@@ -1,16 +1,16 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import type { Tool } from '@/lib/definitions';
+import type { Agent } from '@/lib/definitions';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Star } from 'lucide-react';
 
-interface FeaturedToolProps {
-  tool: Tool;
+interface FeaturedAgentProps {
+  agent: Agent;
 }
 
-export function FeaturedTool({ tool }: FeaturedToolProps) {
+export function FeaturedAgent({ agent }: FeaturedAgentProps) {
   return (
     <div className="relative rounded-xl border border-primary/20 bg-card p-6 shadow-lg transition-all duration-300 hover:shadow-2xl hover:border-primary/50 sm:p-8">
       <div className="absolute top-4 right-4">
@@ -24,10 +24,10 @@ export function FeaturedTool({ tool }: FeaturedToolProps) {
       </div>
       <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
         <div className="flex items-center justify-center md:col-span-1">
-          {tool.logoUrl && (
+          {agent.logoUrl && (
             <Image
-              src={tool.logoUrl}
-              alt={`${tool.name} logo`}
+              src={agent.logoUrl}
+              alt={`${agent.name} logo`}
               width={150}
               height={150}
               className="rounded-2xl border bg-white p-2"
@@ -36,21 +36,21 @@ export function FeaturedTool({ tool }: FeaturedToolProps) {
           )}
         </div>
         <div className="md:col-span-2">
-          <h3 className="text-3xl font-bold text-primary">{tool.name}</h3>
-          <p className="mt-1 text-muted-foreground">by {tool.company}</p>
+          <h3 className="text-3xl font-bold text-primary">{agent.name}</h3>
+          <p className="mt-1 text-muted-foreground">by {agent.company}</p>
           <div className="my-4 flex flex-wrap gap-2">
-            {tool.category.map(cat => (
+            {agent.category.map(cat => (
               <Badge key={cat} variant="secondary">
                 {cat}
               </Badge>
             ))}
           </div>
           <p className="mt-4 leading-relaxed text-foreground/80">
-            {tool.accomplishment}
+            {agent.accomplishment}
           </p>
           <div className="mt-6">
             <Button asChild size="lg">
-              <Link href={`/tools/${tool.id}`}>
+              <Link href={`/tools/${agent.id}`}>
                 Learn More <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>

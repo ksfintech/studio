@@ -13,36 +13,36 @@ import {
   runTransaction,
 } from 'firebase/firestore';
 import {
-  TOOLS as initialTools,
+  AGENTS as initialAgents,
   INSIGHTS as initialInsights,
   CATEGORIES as initialCategories,
 } from './placeholder-data';
-import type { Tool, Insight } from './definitions';
+import type { Agent, Insight } from './definitions';
 
-// --- Featured Tool ---
-const FEATURED_TOOL_DOC_REF = doc(db, 'app_config', 'featured_tool');
+// --- Featured Agent ---
+const FEATURED_AGENT_DOC_REF = doc(db, 'app_config', 'featured_tool');
 
-export async function setFeaturedTools(toolIds: string[]): Promise<void> {
-  await setDoc(FEATURED_TOOL_DOC_REF, { toolIds });
+export async function setFeaturedAgents(agentIds: string[]): Promise<void> {
+  await setDoc(FEATURED_AGENT_DOC_REF, { toolIds: agentIds });
 }
 
-export async function getFeaturedToolIds(): Promise<string[]> {
-  const docSnap = await getDoc(FEATURED_TOOL_DOC_REF);
+export async function getFeaturedAgentIds(): Promise<string[]> {
+  const docSnap = await getDoc(FEATURED_AGENT_DOC_REF);
   if (docSnap.exists()) {
     return docSnap.data().toolIds ?? [];
   }
   return [];
 }
 
-// --- Tools ---
+// --- Agents ---
 
-export async function updateTool(id: string, toolData: Omit<Tool, 'id'>): Promise<void> {
+export async function updateAgent(id: string, agentData: Omit<Agent, 'id'>): Promise<void> {
   const docRef = doc(db, 'tools', id);
-  await setDoc(docRef, toolData);
+  await setDoc(docRef, agentData);
 }
 
-export async function deleteTool(id: string): Promise<void> {
-  const toolDocRef = doc(db, 'tools', id);
+export async function deleteAgent(id: string): Promise<void> {
+  const agentDocRef = doc(db, 'tools', id);
   const featuredDocRef = doc(db, 'app_config', 'featured_tool');
 
   await runTransaction(db, async (transaction) => {
@@ -51,68 +51,68 @@ export async function deleteTool(id: string): Promise<void> {
     if (featuredSnap.exists()) {
       const featuredIds = featuredSnap.data().toolIds || [];
       if (featuredIds.includes(id)) {
-        const newFeaturedIds = featuredIds.filter((toolId: string) => toolId !== id);
+        const newFeaturedIds = featuredIds.filter((agentId: string) => agentId !== id);
         transaction.update(featuredDocRef, { toolIds: newFeaturedIds });
       }
     }
-    transaction.delete(toolDocRef);
+    transaction.delete(agentDocRef);
   });
 }
 
-export async function addTool(toolData: Omit<Tool, 'id'>): Promise<Tool> {
-  const id = toolData.name
+export async function addAgent(agentData: Omit<Agent, 'id'>): Promise<Agent> {
+  const id = agentData.name
     .toLowerCase()
     .replace(/\s+/g, '-')
     .replace(/[^\w-]+/g, '');
 
-  const newToolData = {
-    ...toolData,
-    logoUrl: toolData.logoUrl || 'https://placehold.co/100x100/3B82F6/FFFFFF.png',
+  const newAgentData = {
+    ...agentData,
+    logoUrl: agentData.logoUrl || 'https://placehold.co/100x100/3B82F6/FFFFFF.png',
   };
 
   const docRef = doc(db, 'tools', id);
   // We don't store the ID in the document itself, only use it as the document ID.
-  await setDoc(docRef, newToolData);
+  await setDoc(docRef, newAgentData);
 
-  return { id, ...newToolData };
+  return { id, ...newAgentData };
 }
 
-export async function getTools(): Promise<Tool[]> {
-  const toolsCollection = collection(db, 'tools');
-  const toolSnapshot = await getDocs(toolsCollection);
+export async function getAgents(): Promise<Agent[]> {
+  const agentsCollection = collection(db, 'tools');
+  const agentSnapshot = await getDocs(agentsCollection);
 
-  if (toolSnapshot.empty) {
-    console.log('No tools found. Seeding database...');
+  if (agentSnapshot.empty) {
+    console.log('No agents found. Seeding database...');
     const batch = writeBatch(db);
-    initialTools.forEach(tool => {
-      const { id, ...toolData } = tool;
+    initialAgents.forEach(agent => {
+      const { id, ...agentData } = agent;
       const docRef = doc(db, 'tools', id);
-      batch.set(docRef, toolData);
+      batch.set(docRef, agentData);
     });
     await batch.commit();
-    console.log('Database seeded with initial tools.');
-    return initialTools.sort((a, b) => a.name.localeCompare(b.name));
+    console.log('Database seeded with initial agents.');
+    return initialAgents.sort((a, b) => a.name.localeCompare(b.name));
   }
 
-  const toolList = toolSnapshot.docs.map(
+  const agentList = agentSnapshot.docs.map(
     doc =>
       ({
         id: doc.id,
-        ...(doc.data() as Omit<Tool, 'id'>),
-      } as Tool)
+        ...(doc.data() as Omit<Agent, 'id'>),
+      } as Agent)
   );
-  return toolList.sort((a, b) => a.name.localeCompare(b.name));
+  return agentList.sort((a, b) => a.name.localeCompare(b.name));
 }
 
-export async function getToolById(id: string): Promise<Tool | undefined> {
+export async function getAgentById(id: string): Promise<Agent | undefined> {
   const docRef = doc(db, 'tools', id);
   const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {
     return {
       id: docSnap.id,
-      ...(docSnap.data() as Omit<Tool, 'id'>),
-    } as Tool;
+      ...(docSnap.data() as Omit<Agent, 'id'>),
+    } as Agent;
   } else {
     return undefined;
   }

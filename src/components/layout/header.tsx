@@ -10,7 +10,7 @@ import { Menu } from 'lucide-react';
 import { ThemeToggle } from './theme-toggle';
 
 const navItems = [
-  { href: '/', label: 'Tools' },
+  { href: '/', label: 'Agents' },
   { href: '/insights', label: 'Insights' },
   { href: '/admin', label: 'Admin' },
 ];

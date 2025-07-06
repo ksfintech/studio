@@ -17,8 +17,8 @@ export const metadata: Metadata = {
 
 const adminSections = [
   {
-    title: 'Manage Tools',
-    description: 'Add, edit, and update the AI tool directory.',
+    title: 'Manage Agents',
+    description: 'Add, edit, and update the AI agent directory.',
     href: '/admin/tools',
     icon: <LayoutGrid className="h-8 w-8 text-primary" />,
   },
@@ -30,7 +30,7 @@ const adminSections = [
   },
   {
     title: 'Site Settings',
-    description: 'Configure site-wide settings like featured tools.',
+    description: 'Configure site-wide settings like featured agents.',
     href: '/admin/settings',
     icon: <Settings className="h-8 w-8 text-primary" />,
   },

@@ -1,6 +1,6 @@
-import type { Tool, Insight } from './definitions';
+import type { Agent, Insight } from './definitions';
 
-export const TOOLS: Tool[] = [
+export const AGENTS: Agent[] = [
   {
     id: 'feedzai-risk-engine',
     name: 'Feedzai Risk Engine',
@@ -327,7 +327,7 @@ export const INSIGHTS: Insight[] = [
 ];
 
 export const CATEGORIES: { id: string; name: string }[] = Array.from(
-  new Set(TOOLS.flatMap(tool => tool.category))
+  new Set(AGENTS.flatMap(agent => agent.category))
 )
   .map(category => ({
     id: category

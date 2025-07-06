@@ -1,13 +1,13 @@
-import { getTools, getInsights } from '@/lib/data';
+import { getAgents, getInsights } from '@/lib/data';
 import type { MetadataRoute } from 'next';
 
 const BASE_URL = 'https://aifintechinsights.com';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [tools, insights] = await Promise.all([getTools(), getInsights()]);
+  const [agents, insights] = await Promise.all([getAgents(), getInsights()]);
 
-  const toolUrls = tools.map(tool => ({
-    url: `${BASE_URL}/tools/${tool.id}`,
+  const agentUrls = agents.map(agent => ({
+    url: `${BASE_URL}/tools/${agent.id}`,
     lastModified: new Date(),
     changeFrequency: 'monthly' as const,
     priority: 0.8,
@@ -35,5 +35,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  return [...staticUrls, ...toolUrls, ...insightUrls];
+  return [...staticUrls, ...agentUrls, ...insightUrls];
 }

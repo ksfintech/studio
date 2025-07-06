@@ -3,7 +3,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { createToolAction } from './actions';
+import { createAgentAction } from './actions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -19,7 +19,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import { MultiSelect, type MultiSelectOption } from '@/components/ui/multi-select';
-import { generateToolDetails } from '@/ai/flows/generate-tool-details';
+import { generateAgentDetails } from '@/ai/flows/generate-tool-details';
 import { Wand2, Loader2 } from 'lucide-react';
 
 const FormSchema = z.object({
@@ -49,7 +49,7 @@ const FormSchema = z.object({
 
 type FormValues = z.infer<typeof FormSchema>;
 
-export function AddToolForm({
+export function AddAgentForm({
   allCategories,
 }: {
   allCategories: string[];
@@ -78,14 +78,14 @@ export function AddToolForm({
       toast({
         variant: 'destructive',
         title: 'Input Required',
-        description: 'Please paste some text about the tool to generate details.',
+        description: 'Please paste some text about the agent to generate details.',
       });
       return;
     }
 
     setIsGenerating(true);
     try {
-      const result = await generateToolDetails({
+      const result = await generateAgentDetails({
         text: aiInputText,
         existingCategories: allCategories,
       });
@@ -106,7 +106,7 @@ export function AddToolForm({
         description: 'The form has been populated. Please review and submit.',
       });
     } catch (error) {
-      console.error('Failed to generate tool details with AI:', error);
+      console.error('Failed to generate agent details with AI:', error);
       toast({
         variant: 'destructive',
         title: 'AI Generation Failed',
@@ -120,19 +120,19 @@ export function AddToolForm({
   async function onSubmit(values: FormValues) {
     setIsSubmitting(true);
 
-    const result = await createToolAction(values);
+    const result = await createAgentAction(values);
 
     if (result?.success === false) {
       toast({
         variant: 'destructive',
-        title: 'Error creating tool',
+        title: 'Error creating agent',
         description: result.message,
       });
       setIsSubmitting(false);
     } else {
       toast({
         title: 'Success!',
-        description: 'Tool created successfully. Redirecting...',
+        description: 'Agent created successfully. Redirecting...',
       });
     }
   }
@@ -151,11 +151,11 @@ export function AddToolForm({
             <h3 className="text-lg font-semibold">Generate with AI</h3>
           </div>
           <p className="text-sm text-muted-foreground">
-            Paste text from the tool's website below, and AI will attempt to
+            Paste text from the agent's website below, and AI will attempt to
             fill out the form for you.
           </p>
           <Textarea
-            placeholder="Paste text here from a tool's 'About' or 'Product' page..."
+            placeholder="Paste text here from an agent's 'About' or 'Product' page..."
             value={aiInputText}
             onChange={(e) => setAiInputText(e.target.value)}
             className="bg-background"
@@ -183,7 +183,7 @@ export function AddToolForm({
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Tool Name</FormLabel>
+              <FormLabel>Agent Name</FormLabel>
               <FormControl>
                 <Input placeholder="e.g., Feedzai Risk Engine" {...field} />
               </FormControl>
@@ -200,7 +200,7 @@ export function AddToolForm({
               <FormLabel>Description</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="A brief, one-sentence summary of what the tool does."
+                  placeholder="A brief, one-sentence summary of what the agent does."
                   {...field}
                 />
               </FormControl>
@@ -240,7 +240,7 @@ export function AddToolForm({
               <FormLabel>Accomplishment</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="A concise paragraph explaining what the tool accomplishes."
+                  placeholder="A concise paragraph explaining what the agent accomplishes."
                   {...field}
                 />
               </FormControl>
@@ -312,7 +312,7 @@ export function AddToolForm({
         />
 
         <Button type="submit" disabled={isSubmitting || isGenerating} className="w-full sm:w-auto">
-          {isSubmitting ? 'Adding Tool...' : 'Add Tool'}
+          {isSubmitting ? 'Adding Agent...' : 'Add Agent'}
         </Button>
       </form>
     </Form>

@@ -9,7 +9,7 @@ import { MobileFooter } from '@/components/layout/mobile-footer';
 
 export const metadata: Metadata = {
   title: 'AIFinTechInsights.com',
-  description: 'An AI Fintech Tools Directory & Insights Platform',
+  description: 'An AI Fintech Agents Directory & Insights Platform',
 };
 
 export default function RootLayout({

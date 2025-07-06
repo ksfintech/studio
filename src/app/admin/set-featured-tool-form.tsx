@@ -2,32 +2,32 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { setFeaturedToolsAction } from './actions';
+import { setFeaturedAgentsAction } from './actions';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import type { Tool } from '@/lib/definitions';
+import type { Agent } from '@/lib/definitions';
 import { Loader2 } from 'lucide-react';
 import { MultiSelect, type MultiSelectOption } from '@/components/ui/multi-select';
 
-interface SetFeaturedToolsFormProps {
-  tools: Tool[];
-  currentFeaturedToolIds: string[];
+interface SetFeaturedAgentsFormProps {
+  agents: Agent[];
+  currentFeaturedAgentIds: string[];
 }
 
-export function SetFeaturedToolForm({
-  tools,
-  currentFeaturedToolIds,
-}: SetFeaturedToolsFormProps) {
+export function SetFeaturedAgentForm({
+  agents,
+  currentFeaturedAgentIds,
+}: SetFeaturedAgentsFormProps) {
   const { toast } = useToast();
-  const [selectedToolIds, setSelectedToolIds] = useState<string[]>(
-    currentFeaturedToolIds
+  const [selectedAgentIds, setSelectedAgentIds] = useState<string[]>(
+    currentFeaturedAgentIds
   );
   const [isPending, startTransition] = useTransition();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     startTransition(async () => {
-      const result = await setFeaturedToolsAction(selectedToolIds);
+      const result = await setFeaturedAgentsAction(selectedAgentIds);
       if (result.success) {
         toast({
           title: 'Success!',
@@ -43,10 +43,10 @@ export function SetFeaturedToolForm({
     });
   };
 
-  const toolOptions: MultiSelectOption[] = tools
-    .map(tool => ({
-      value: tool.id,
-      label: tool.name,
+  const agentOptions: MultiSelectOption[] = agents
+    .map(agent => ({
+      value: agent.id,
+      label: agent.name,
     }))
     .sort((a, b) => a.label.localeCompare(b.label));
 
@@ -54,16 +54,16 @@ export function SetFeaturedToolForm({
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <label
-          htmlFor="tool-select-trigger"
+          htmlFor="agent-select-trigger"
           className="block text-sm font-medium mb-2"
         >
-          Select Featured Tools
+          Select Featured Agents
         </label>
         <MultiSelect
-          options={toolOptions}
-          selected={selectedToolIds}
-          onChange={setSelectedToolIds}
-          placeholder="Select tools to feature..."
+          options={agentOptions}
+          selected={selectedAgentIds}
+          onChange={setSelectedAgentIds}
+          placeholder="Select agents to feature..."
           className="w-full"
         />
       </div>
@@ -73,7 +73,7 @@ export function SetFeaturedToolForm({
         className="w-full sm:w-auto"
       >
         {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        {isPending ? 'Saving...' : 'Set Featured Tools'}
+        {isPending ? 'Saving...' : 'Set Featured Agents'}
       </Button>
     </form>
   );

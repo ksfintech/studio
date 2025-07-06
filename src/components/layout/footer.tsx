@@ -15,7 +15,7 @@ export function Footer() {
             </Link>
             <p className="text-muted-foreground text-sm max-w-sm">
               Your guide to the world of AI in Fintech. Discover, filter, and
-              find the perfect tool to revolutionize your financial services.
+              find the perfect agent to revolutionize your financial services.
             </p>
           </div>
 
@@ -24,7 +24,7 @@ export function Footer() {
             <ul className="space-y-2">
               <li>
                 <Link href="/" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Tools
+                  Agents
                 </Link>
               </li>
               <li>

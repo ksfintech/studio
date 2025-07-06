@@ -1,4 +1,4 @@
-import { getToolById } from '@/lib/data';
+import { getAgentById } from '@/lib/data';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -14,24 +14,24 @@ import { CheckCircle2, ExternalLink } from 'lucide-react';
 import { SuggestedInsights } from '@/components/tools/suggested-insights';
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
-  const tool = await getToolById(params.id);
-  if (!tool) {
-    return { title: 'Tool Not Found' };
+  const agent = await getAgentById(params.id);
+  if (!agent) {
+    return { title: 'Agent Not Found' };
   }
   return {
-    title: `${tool.name} | AIFinTechInsights.com`,
-    description: tool.description,
+    title: `${agent.name} | AIFinTechInsights.com`,
+    description: agent.description,
   };
 }
 
-export default async function ToolDetailPage({
+export default async function AgentDetailPage({
   params,
 }: {
   params: { id: string };
 }) {
-  const tool = await getToolById(params.id);
+  const agent = await getAgentById(params.id);
 
-  if (!tool) {
+  if (!agent) {
     notFound();
   }
 
@@ -41,10 +41,10 @@ export default async function ToolDetailPage({
         <div className="lg:col-span-2">
           <header className="mb-8">
             <div className="flex items-start gap-4 mb-4">
-              {tool.logoUrl && (
+              {agent.logoUrl && (
                 <Image
-                  src={tool.logoUrl}
-                  alt={`${tool.name} logo`}
+                  src={agent.logoUrl}
+                  alt={`${agent.name} logo`}
                   width={64}
                   height={64}
                   className="rounded-xl border"
@@ -52,14 +52,14 @@ export default async function ToolDetailPage({
                 />
               )}
               <div className="flex-1">
-                <h1 className="text-4xl font-bold text-primary">{tool.name}</h1>
+                <h1 className="text-4xl font-bold text-primary">{agent.name}</h1>
                 <p className="text-lg text-muted-foreground">
-                  by {tool.company}
+                  by {agent.company}
                 </p>
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
-              {tool.category.map(cat => (
+              {agent.category.map(cat => (
                 <Badge key={cat} variant="secondary">
                   {cat}
                 </Badge>
@@ -73,13 +73,13 @@ export default async function ToolDetailPage({
                 Insight & Accomplishment
               </h2>
               <p className="text-foreground/80 leading-relaxed">
-                {tool.accomplishment}
+                {agent.accomplishment}
               </p>
             </div>
             <div>
               <h2 className="text-2xl font-semibold mb-4">Key Features</h2>
               <ul className="space-y-3">
-                {tool.features.map((feature, index) => (
+                {agent.features.map((feature, index) => (
                   <li key={index} className="flex items-start">
                     <CheckCircle2 className="h-5 w-5 text-green-500 mt-0.5 mr-3 shrink-0" />
                     <span>{feature}</span>
@@ -97,16 +97,16 @@ export default async function ToolDetailPage({
             </CardHeader>
             <CardContent>
               <Button asChild className="w-full">
-                <Link href={tool.websiteUrl} target="_blank">
-                  Go to {tool.name}
+                <Link href={agent.websiteUrl} target="_blank">
+                  Go to {agent.name}
                   <ExternalLink className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
             </CardContent>
           </Card>
           <SuggestedInsights
-            toolCategory={tool.category.join(', ')}
-            toolDescription={tool.accomplishment}
+            agentCategory={agent.category.join(', ')}
+            agentDescription={agent.accomplishment}
           />
         </aside>
       </div>

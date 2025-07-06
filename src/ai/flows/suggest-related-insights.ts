@@ -1,7 +1,7 @@
 'use server';
 
 /**
- * @fileOverview Suggests related insight articles based on the tool's category and description.
+ * @fileOverview Suggests related insight articles based on the agent's category and description.
  *
  * - suggestRelatedInsights - A function that suggests related insight articles.
  * - SuggestRelatedInsightsInput - The input type for the suggestRelatedInsights function.
@@ -12,8 +12,8 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const SuggestRelatedInsightsInputSchema = z.object({
-  toolCategory: z.string().describe('The category of the AI Fintech tool.'),
-  toolDescription: z.string().describe('The description of the AI Fintech tool.'),
+  agentCategory: z.string().describe('The category of the AI Fintech agent.'),
+  agentDescription: z.string().describe('The description of the AI Fintech agent.'),
 });
 export type SuggestRelatedInsightsInput = z.infer<typeof SuggestRelatedInsightsInputSchema>;
 
@@ -35,12 +35,12 @@ const prompt = ai.definePrompt({
   name: 'suggestRelatedInsightsPrompt',
   input: {schema: SuggestRelatedInsightsInputSchema},
   output: {schema: SuggestRelatedInsightsOutputSchema},
-  prompt: `You are an AI assistant designed to suggest related insight articles based on the category and description of an AI Fintech tool.
+  prompt: `You are an AI assistant designed to suggest related insight articles based on the category and description of an AI Fintech agent.
 
-  Given the following AI Fintech tool category and description, suggest 3 related insight articles. Return the title and a concise summary for each article.
+  Given the following AI Fintech agent category and description, suggest 3 related insight articles. Return the title and a concise summary for each article.
 
-  Tool Category: {{{toolCategory}}}
-  Tool Description: {{{toolDescription}}}
+  Agent Category: {{{agentCategory}}}
+  Agent Description: {{{agentDescription}}}
 
   Format the output as a JSON array of objects, where each object has a "title" and a "summary" field.
   `,

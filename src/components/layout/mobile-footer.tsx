@@ -7,7 +7,7 @@ import { LayoutGrid, Lightbulb } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
-  { href: '/', label: 'Tools', icon: LayoutGrid },
+  { href: '/', label: 'Agents', icon: LayoutGrid },
   { href: '/insights', label: 'Insights', icon: Lightbulb },
 ];
 

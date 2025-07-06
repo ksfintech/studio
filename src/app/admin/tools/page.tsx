@@ -1,6 +1,6 @@
 
-import { AddToolForm } from '../add-tool-form';
-import { getTools, getCategories } from '@/lib/data';
+import { AddAgentForm } from '../add-tool-form';
+import { getAgents, getCategories } from '@/lib/data';
 import {
   Card,
   CardContent,
@@ -18,16 +18,16 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { ArrowLeft } from 'lucide-react';
-import { AdminToolList } from './admin-tool-list';
+import { AdminAgentList } from './admin-tool-list';
 
 export const metadata: Metadata = {
-  title: 'Manage Tools | AIFinTechInsights.com',
-  description: 'Add, edit, or delete tools in the directory.',
+  title: 'Manage Agents | AIFinTechInsights.com',
+  description: 'Add, edit, or delete agents in the directory.',
 };
 
-export default async function ManageToolsPage() {
-  const [tools, allCategories] = await Promise.all([
-    getTools(),
+export default async function ManageAgentsPage() {
+  const [agents, allCategories] = await Promise.all([
+    getAgents(),
     getCategories(),
   ]);
 
@@ -41,19 +41,19 @@ export default async function ManageToolsPage() {
       </Button>
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">Manage Tools</CardTitle>
+          <CardTitle className="text-2xl">Manage Agents</CardTitle>
           <CardDescription>
-            Add a new tool or edit an existing one from the list below.
+            Add a new agent or edit an existing one from the list below.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <AdminToolList tools={tools} />
+          <AdminAgentList agents={agents} />
 
           <Accordion type="single" collapsible className="w-full mt-8">
-            <AccordionItem value="add-tool">
-              <AccordionTrigger>Add a New Tool</AccordionTrigger>
+            <AccordionItem value="add-agent">
+              <AccordionTrigger>Add a New Agent</AccordionTrigger>
               <AccordionContent className="pt-4">
-                <AddToolForm allCategories={allCategories} />
+                <AddAgentForm allCategories={allCategories} />
               </AccordionContent>
             </AccordionItem>
           </Accordion>

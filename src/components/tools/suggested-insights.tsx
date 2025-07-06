@@ -15,13 +15,13 @@ import { Wand2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface SuggestedInsightsProps {
-  toolCategory: string;
-  toolDescription: string;
+  agentCategory: string;
+  agentDescription: string;
 }
 
 export function SuggestedInsights({
-  toolCategory,
-  toolDescription,
+  agentCategory,
+  agentDescription,
 }: SuggestedInsightsProps) {
   const [suggestions, setSuggestions] =
     useState<SuggestRelatedInsightsOutput>([]);
@@ -33,8 +33,8 @@ export function SuggestedInsights({
       try {
         setIsLoading(true);
         const result = await suggestRelatedInsights({
-          toolCategory,
-          toolDescription,
+          agentCategory,
+          agentDescription,
         });
         setSuggestions(result);
       } catch (error) {
@@ -50,7 +50,7 @@ export function SuggestedInsights({
       }
     }
     fetchSuggestions();
-  }, [toolCategory, toolDescription, toast]);
+  }, [agentCategory, agentDescription, toast]);
 
   return (
     <Card className="bg-secondary/50">

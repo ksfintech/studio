@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import type { Tool } from '@/lib/definitions';
+import type { Agent } from '@/lib/definitions';
 import {
   Card,
   CardContent,
@@ -13,25 +13,25 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ExternalLink } from 'lucide-react';
 
-interface ToolCardProps {
-  tool: Tool;
+interface AgentCardProps {
+  agent: Agent;
 }
 
-export function ToolCard({ tool }: ToolCardProps) {
+export function AgentCard({ agent }: AgentCardProps) {
   return (
     <div className="relative group/card h-full">
       <Card className="h-full flex flex-col transition-all duration-300 group-hover/card:shadow-xl group-hover/card:border-primary/50 group-hover/card:-translate-y-1 bg-card">
         <Link
-          href={`/tools/${tool.id}`}
+          href={`/tools/${agent.id}`}
           className="absolute inset-0 z-0"
-          aria-label={`View details for ${tool.name}`}
+          aria-label={`View details for ${agent.name}`}
         ></Link>
         <CardHeader>
           <div className="flex items-center gap-4">
-            {tool.logoUrl && (
+            {agent.logoUrl && (
               <Image
-                src={tool.logoUrl}
-                alt={`${tool.name} logo`}
+                src={agent.logoUrl}
+                alt={`${agent.name} logo`}
                 width={50}
                 height={50}
                 className="rounded-lg border bg-white p-1"
@@ -39,19 +39,19 @@ export function ToolCard({ tool }: ToolCardProps) {
               />
             )}
             <div className="flex-1">
-              <CardTitle className="text-lg">{tool.name}</CardTitle>
-              <CardDescription>{tool.company}</CardDescription>
+              <CardTitle className="text-lg">{agent.name}</CardTitle>
+              <CardDescription>{agent.company}</CardDescription>
             </div>
           </div>
         </CardHeader>
         <CardContent className="flex-1">
           <p className="text-sm text-muted-foreground line-clamp-3">
-            {tool.description}
+            {agent.description}
           </p>
         </CardContent>
         <CardFooter className="flex-col items-start gap-4">
           <div className="flex flex-wrap gap-2">
-            {tool.category.map(cat => (
+            {agent.category.map(cat => (
               <Badge key={cat} variant="secondary">
                 {cat}
               </Badge>
@@ -60,7 +60,7 @@ export function ToolCard({ tool }: ToolCardProps) {
           <div className="w-full opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 pt-2 z-10 relative">
             <Button asChild className="w-full">
               <a
-                href={tool.websiteUrl}
+                href={agent.websiteUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={e => e.stopPropagation()}

@@ -6,7 +6,7 @@ import {
 } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 
-function ToolCardSkeleton() {
+function AgentCardSkeleton() {
   return (
     <Card className="h-full flex flex-col">
       <CardHeader>
@@ -33,17 +33,17 @@ function ToolCardSkeleton() {
   );
 }
 
-export function ToolListSkeleton() {
+export function AgentListSkeleton() {
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {Array.from({ length: 8 }).map((_, i) => (
-        <ToolCardSkeleton key={i} />
+        <AgentCardSkeleton key={i} />
       ))}
     </div>
   );
 }
 
-export function FeaturedToolSkeleton() {
+export function FeaturedAgentSkeleton() {
   return (
     <section>
       <div className="mb-8 space-y-4 text-center">

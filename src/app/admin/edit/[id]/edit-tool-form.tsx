@@ -4,7 +4,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { updateToolAction } from '@/app/admin/actions';
+import { updateAgentAction } from '@/app/admin/actions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -19,7 +19,7 @@ import {
 } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
-import type { Tool } from '@/lib/definitions';
+import type { Agent } from '@/lib/definitions';
 import { Loader2 } from 'lucide-react';
 import { MultiSelect, type MultiSelectOption } from '@/components/ui/multi-select';
 
@@ -51,11 +51,11 @@ const FormSchema = z.object({
 
 type FormValues = z.infer<typeof FormSchema>;
 
-export function EditToolForm({
-  tool,
+export function EditAgentForm({
+  agent,
   allCategories,
 }: {
-  tool: Tool;
+  agent: Agent;
   allCategories: string[];
 }) {
   const { toast } = useToast();
@@ -64,26 +64,26 @@ export function EditToolForm({
   const form = useForm<FormValues>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      id: tool.id,
-      name: tool.name,
-      description: tool.description,
-      category: tool.category,
-      accomplishment: tool.accomplishment,
-      features: tool.features.join(', '),
-      company: tool.company,
-      websiteUrl: tool.websiteUrl,
-      logoUrl: tool.logoUrl || '',
+      id: agent.id,
+      name: agent.name,
+      description: agent.description,
+      category: agent.category,
+      accomplishment: agent.accomplishment,
+      features: agent.features.join(', '),
+      company: agent.company,
+      websiteUrl: agent.websiteUrl,
+      logoUrl: agent.logoUrl || '',
     },
   });
 
   async function onSubmit(values: FormValues) {
     setIsSubmitting(true);
-    const result = await updateToolAction(values);
+    const result = await updateAgentAction(values);
 
     if (result?.success === false) {
       toast({
         variant: 'destructive',
-        title: 'Error updating tool',
+        title: 'Error updating agent',
         description: result.message,
       });
       setIsSubmitting(false);
@@ -105,7 +105,7 @@ export function EditToolForm({
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Tool Name</FormLabel>
+              <FormLabel>Agent Name</FormLabel>
               <FormControl>
                 <Input placeholder="e.g., Feedzai Risk Engine" {...field} />
               </FormControl>
@@ -122,7 +122,7 @@ export function EditToolForm({
               <FormLabel>Description</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="A brief, one-sentence summary of what the tool does."
+                  placeholder="A brief, one-sentence summary of what the agent does."
                   {...field}
                 />
               </FormControl>
@@ -162,7 +162,7 @@ export function EditToolForm({
               <FormLabel>Accomplishment</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="A concise paragraph explaining what the tool accomplishes."
+                  placeholder="A concise paragraph explaining what the agent accomplishes."
                   {...field}
                 />
               </FormControl>
@@ -247,7 +247,7 @@ export function EditToolForm({
           className="w-full sm:w-auto"
         >
           {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          {isSubmitting ? 'Updating Tool...' : 'Update Tool'}
+          {isSubmitting ? 'Updating Agent...' : 'Update Agent'}
         </Button>
       </form>
     </Form>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { deleteToolAction } from '@/app/admin/actions';
+import { deleteAgentAction } from '@/app/admin/actions';
 import { Button } from '@/components/ui/button';
 import {
   AlertDialog,
@@ -17,13 +17,13 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Trash2 } from 'lucide-react';
 
-export function DeleteToolButton({ toolId }: { toolId: string }) {
+export function DeleteAgentButton({ agentId }: { agentId: string }) {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
 
   const handleDelete = async () => {
     startTransition(async () => {
-      const result = await deleteToolAction(toolId);
+      const result = await deleteAgentAction(agentId);
       if (result.success) {
         toast({
           title: 'Success!',
@@ -50,7 +50,7 @@ export function DeleteToolButton({ toolId }: { toolId: string }) {
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete the tool
+            This action cannot be undone. This will permanently delete the agent
             and remove it from any featured lists.
           </AlertDialogDescription>
         </AlertDialogHeader>

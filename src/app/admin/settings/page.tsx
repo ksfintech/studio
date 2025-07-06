@@ -1,6 +1,6 @@
 
-import { SetFeaturedToolForm } from '../set-featured-tool-form';
-import { getTools, getFeaturedToolIds } from '@/lib/data';
+import { SetFeaturedAgentForm } from '../set-featured-tool-form';
+import { getAgents, getFeaturedAgentIds } from '@/lib/data';
 import {
   Card,
   CardContent,
@@ -25,9 +25,9 @@ export const metadata: Metadata = {
 };
 
 export default async function SettingsPage() {
-  const [tools, featuredToolIds] = await Promise.all([
-    getTools(),
-    getFeaturedToolIds(),
+  const [agents, featuredAgentIds] = await Promise.all([
+    getAgents(),
+    getFeaturedAgentIds(),
   ]);
 
   return (
@@ -48,15 +48,15 @@ export default async function SettingsPage() {
           </CardHeader>
           <CardContent>
             <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="featured-tools">
-                <AccordionTrigger>Set Featured Tools</AccordionTrigger>
+              <AccordionItem value="featured-agents">
+                <AccordionTrigger>Set Featured Agents</AccordionTrigger>
                 <AccordionContent className="pt-4">
                   <p className="text-sm text-muted-foreground mb-4">
-                    Choose which tools are highlighted on the homepage carousel.
+                    Choose which agents are highlighted on the homepage carousel.
                   </p>
-                  <SetFeaturedToolForm
-                    tools={tools}
-                    currentFeaturedToolIds={featuredToolIds}
+                  <SetFeaturedAgentForm
+                    agents={agents}
+                    currentFeaturedAgentIds={featuredAgentIds}
                   />
                 </AccordionContent>
               </AccordionItem>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import type { Tool } from '@/lib/definitions';
+import type { Agent } from '@/lib/definitions';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -10,33 +10,33 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { ToolCard } from './tool-card';
+import { AgentCard } from './tool-card';
 import { Search } from 'lucide-react';
 
-interface ToolListProps {
-  tools: Tool[];
+interface AgentListProps {
+  agents: Agent[];
   categories: string[];
 }
 
-export function ToolList({ tools, categories }: ToolListProps) {
+export function AgentList({ agents, categories }: AgentListProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
 
-  const filteredTools = useMemo(() => {
-    return tools
-      .filter(tool => {
+  const filteredAgents = useMemo(() => {
+    return agents
+      .filter(agent => {
         if (selectedCategory === 'all') return true;
-        return tool.category.includes(selectedCategory);
+        return agent.category.includes(selectedCategory);
       })
-      .filter(tool => {
+      .filter(agent => {
         const query = searchQuery.toLowerCase();
         return (
-          tool.name.toLowerCase().includes(query) ||
-          tool.description.toLowerCase().includes(query) ||
-          tool.company.toLowerCase().includes(query)
+          agent.name.toLowerCase().includes(query) ||
+          agent.description.toLowerCase().includes(query) ||
+          agent.company.toLowerCase().includes(query)
         );
       });
-  }, [tools, searchQuery, selectedCategory]);
+  }, [agents, searchQuery, selectedCategory]);
 
   return (
     <div>
@@ -46,7 +46,7 @@ export function ToolList({ tools, categories }: ToolListProps) {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
               type="search"
-              placeholder="Search over 15 AI tools..."
+              placeholder="Search over 15 AI agents..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               className="pl-10 w-full h-12 text-base"
@@ -68,16 +68,16 @@ export function ToolList({ tools, categories }: ToolListProps) {
         </div>
       </div>
 
-      {filteredTools.length > 0 ? (
+      {filteredAgents.length > 0 ? (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filteredTools.map(tool => (
-            <ToolCard key={tool.id} tool={tool} />
+          {filteredAgents.map(agent => (
+            <AgentCard key={agent.id} agent={agent} />
           ))}
         </div>
       ) : (
         <div className="text-center py-16">
           <p className="text-lg font-semibold text-foreground">
-            No tools found
+            No agents found
           </p>
           <p className="text-muted-foreground">
             Try adjusting your search or filter criteria.
