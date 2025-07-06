@@ -20,7 +20,6 @@ import {
 } from '@/components/ui/table';
 import Link from 'next/link';
 import { Button } from '../ui/button';
-import Image from 'next/image';
 import { CheckCircle2 } from 'lucide-react';
 
 interface AgentComparisonProps {
@@ -74,29 +73,13 @@ export function AgentComparison({ agents, categories }: AgentComparisonProps) {
                 {filteredAgents.map(agent => (
                   <TableRow key={agent.id} className="[&_td]:p-6">
                     <TableCell className="font-medium align-top">
-                      <div className="flex items-start gap-4">
-                        {agent.logoUrl && (
-                          <Image
-                            src={
-                              agent.logoUrl.startsWith('http')
-                                ? agent.logoUrl
-                                : 'https://placehold.co/48x48/324A80.png'
-                            }
-                            alt={`${agent.name} logo`}
-                            width={48}
-                            height={48}
-                            className="rounded-lg border bg-white p-1"
-                            data-ai-hint="logo"
-                          />
-                        )}
-                        <div className="flex-1">
-                          <Button asChild variant="link" className="p-0 h-auto font-semibold text-lg">
-                            <Link href={`/tools/${agent.id}`}>{agent.name}</Link>
-                          </Button>
-                          <p className="text-sm text-muted-foreground">
-                            by {agent.company}
-                          </p>
-                        </div>
+                      <div>
+                        <Button asChild variant="link" className="p-0 h-auto font-semibold text-lg">
+                          <Link href={`/tools/${agent.id}`}>{agent.name}</Link>
+                        </Button>
+                        <p className="text-sm text-muted-foreground">
+                          by {agent.company}
+                        </p>
                       </div>
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground align-top">
