@@ -8,6 +8,8 @@ export type Agent = {
   company: string;
   websiteUrl: string;
   logoUrl?: string;
+  pricing?: 'free' | 'free+paid' | 'paid'; // 'free' = only free, 'free+paid' = has premium, 'paid' = only paid
+  useCases?: string[]; // Highlighted use cases for the agent
 };
 
 export type Insight = {

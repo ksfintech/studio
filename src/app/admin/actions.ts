@@ -2,7 +2,7 @@
 'use server';
 
 import { z } from 'zod';
-import { addAgent, updateAgent, setFeaturedAgents, deleteAgent } from '@/lib/data';
+import { addAgent, updateAgent, setFeaturedAgents, deleteAgent, seedNewAgents } from '@/lib/data';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import type { Agent } from '@/lib/definitions';
@@ -104,6 +104,38 @@ export async function deleteAgentAction(id: string) {
     return {
       success: false,
       message: 'Database error: Failed to delete agent.',
+    };
+  }
+}
+
+export async function seedNewAgentsAction() {
+  try {
+    await seedNewAgents();
+    revalidatePath('/');
+    revalidatePath('/admin/tools');
+    return { success: true, message: 'New agents seeded successfully.' };
+  } catch (error) {
+    console.error('Failed to seed new agents:', error);
+    return {
+      success: false,
+      message: 'Database error: Failed to seed new agents.',
+    };
+  }
+}
+
+export async function updateLogoUrlsAction() {
+  try {
+    // Import the data function that will update logo URLs
+    const { updateLogoUrls } = await import('@/lib/data');
+    await updateLogoUrls();
+    revalidatePath('/');
+    revalidatePath('/admin/tools');
+    return { success: true, message: 'Logo URLs updated successfully.' };
+  } catch (error) {
+    console.error('Failed to update logo URLs:', error);
+    return {
+      success: false,
+      message: 'Database error: Failed to update logo URLs.',
     };
   }
 }

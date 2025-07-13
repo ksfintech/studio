@@ -1,6 +1,6 @@
 import { getAgentById } from '@/lib/data';
 import { notFound } from 'next/navigation';
-import Image from 'next/image';
+import { AgentLogo } from '@/components/tools/AgentLogo';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
     return { title: 'Agent Not Found' };
   }
   return {
-    title: `${agent.name} | AIFinTechInsights.com`,
+    title: `${agent.name} | AI FinTech Insights`,
     description: agent.description,
   };
 }
@@ -41,19 +41,14 @@ export default async function AgentDetailPage({
         <div className="lg:col-span-2">
           <header className="mb-8">
             <div className="flex items-start gap-4 mb-4">
-              {agent.logoUrl && (
-                <Image
-                  src={
-                    agent.logoUrl.startsWith('http')
-                      ? agent.logoUrl
-                      : 'https://placehold.co/64x64/324A80.png'
-                  }
-                  alt={`${agent.name} logo`}
-                  width={64}
-                  height={64}
-                  className="rounded-xl border"
-                  data-ai-hint="logo"
-                />
+              {agent.logoUrl ? (
+                <AgentLogo logoUrl={agent.logoUrl} company={agent.company} size={80} />
+              ) : (
+                <div className="w-20 h-20 rounded-xl border border-border bg-muted flex items-center justify-center flex-shrink-0">
+                  <span className="text-2xl font-bold text-muted-foreground">
+                    {agent.company.charAt(0)}
+                  </span>
+                </div>
               )}
               <div className="flex-1">
                 <h1 className="text-4xl font-bold text-primary">{agent.name}</h1>
@@ -91,6 +86,19 @@ export default async function AgentDetailPage({
                 ))}
               </ul>
             </div>
+            {agent.useCases && agent.useCases.length > 0 && (
+              <div>
+                <h2 className="text-2xl font-semibold mb-4">Use Cases</h2>
+                <ul className="space-y-2">
+                  {agent.useCases.map((useCase, index) => (
+                    <li key={index} className="flex items-start">
+                      <div className="w-2 h-2 bg-primary rounded-full mt-2 mr-3 shrink-0" />
+                      <span className="text-foreground/80">{useCase}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </article>
         </div>
 

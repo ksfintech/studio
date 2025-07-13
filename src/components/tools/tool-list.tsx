@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { AgentCard } from './tool-card';
-import { Search } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import {
   Accordion,
   AccordionContent,
@@ -20,6 +20,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { FeaturedAgent } from './featured-tool';
+import { Button } from '@/components/ui/button';
 
 interface AgentListProps {
   agents: Agent[];
@@ -34,9 +35,12 @@ export function AgentList({
 }: AgentListProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [sortOrder, setSortOrder] = useState<'az' | 'za' | 'newest' | 'oldest' | 'popular'>('az');
+  const [currentPage, setCurrentPage] = useState(1);
+  const agentsPerPage = 15;
 
   const filteredAgents = useMemo(() => {
-    return agents
+    let result = agents
       .filter(agent => {
         if (selectedCategory === 'all') return true;
         return agent.category.includes(selectedCategory);
@@ -49,7 +53,42 @@ export function AgentList({
           agent.company.toLowerCase().includes(query)
         );
       });
-  }, [agents, searchQuery, selectedCategory]);
+    // Sorting logic
+    switch (sortOrder) {
+      case 'az':
+        result = result.slice().sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case 'za':
+        result = result.slice().sort((a, b) => b.name.localeCompare(a.name));
+        break;
+      case 'newest':
+        result = result.slice().sort((a, b) => b.id.localeCompare(a.id));
+        break;
+      case 'oldest':
+        result = result.slice().sort((a, b) => a.id.localeCompare(b.id));
+        break;
+      case 'popular':
+        // No popularity field yet; leave as-is
+        break;
+      default:
+        break;
+    }
+    return result;
+  }, [agents, searchQuery, selectedCategory, sortOrder]);
+
+  // Reset to first page when filters change
+  useMemo(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedCategory, sortOrder]);
+
+  const totalPages = Math.ceil(filteredAgents.length / agentsPerPage);
+  const startIndex = (currentPage - 1) * agentsPerPage;
+  const endIndex = startIndex + agentsPerPage;
+  const displayedAgents = filteredAgents.slice(startIndex, endIndex);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   return (
     <div>
@@ -78,6 +117,18 @@ export function AgentList({
               ))}
             </SelectContent>
           </Select>
+          <Select value={sortOrder} onValueChange={v => setSortOrder(v as any)}>
+            <SelectTrigger className="w-full sm:w-[200px] h-12 text-base">
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="az">A-Z</SelectItem>
+              <SelectItem value="za">Z-A</SelectItem>
+              <SelectItem value="newest">Newest</SelectItem>
+              <SelectItem value="oldest">Oldest</SelectItem>
+              <SelectItem value="popular">Most Popular</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
@@ -103,16 +154,58 @@ export function AgentList({
       <div className="mb-6">
         <h2 className="text-2xl font-semibold">All Agents</h2>
         <p className="text-muted-foreground text-sm mt-1">
-          Showing {filteredAgents.length} of {agents.length} agents.
+          Showing {displayedAgents.length} of {filteredAgents.length} agents.
         </p>
       </div>
 
-      {filteredAgents.length > 0 ? (
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filteredAgents.map(agent => (
-            <AgentCard key={agent.id} agent={agent} />
-          ))}
-        </div>
+      {displayedAgents.length > 0 ? (
+        <>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {displayedAgents.map(agent => (
+              <AgentCard key={agent.id} agent={agent} />
+            ))}
+          </div>
+          
+          {totalPages > 1 && (
+            <div className="flex justify-center items-center gap-2 mt-12">
+              <Button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-1"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Previous
+              </Button>
+              
+              <div className="flex items-center gap-1">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                  <Button
+                    key={page}
+                    onClick={() => handlePageChange(page)}
+                    variant={currentPage === page ? "default" : "outline"}
+                    size="sm"
+                    className="w-10 h-10"
+                  >
+                    {page}
+                  </Button>
+                ))}
+              </div>
+              
+              <Button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-1"
+              >
+                Next
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
+        </>
       ) : (
         <div className="text-center py-16">
           <p className="text-lg font-semibold text-foreground">

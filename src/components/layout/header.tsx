@@ -8,9 +8,13 @@ import { Button } from '../ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet';
 import { Menu } from 'lucide-react';
 import { ThemeToggle } from './theme-toggle';
+import { useChatbot } from '@/context/chatbot-context';
 
 const navItems = [
   { href: '/', label: 'Agents' },
+  { href: '/learn', label: 'Learn' },
+  { href: '/calculators', label: 'Calculators' },
+  { href: '/about', label: 'About' },
   { href: '/insights', label: 'Insights' },
   { href: '/compare', label: 'Compare' },
   { href: '/recommend', label: 'Recommender' },
@@ -19,6 +23,7 @@ const navItems = [
 
 export function Header() {
   const pathname = usePathname();
+  const { openChatbot } = useChatbot();
 
   const renderNavLinks = (isMobile = false) =>
     navItems.map(item => (
@@ -44,7 +49,7 @@ export function Header() {
           <Link href="/" className="flex items-center space-x-2">
             <Icons.Compass className="h-6 w-6 text-primary" />
             <span className="text-xl font-bold tracking-tight sm:inline-block">
-              AIFinTechInsights.com
+              AI FinTech Insights
             </span>
           </Link>
         </div>
@@ -52,6 +57,9 @@ export function Header() {
         {/* Desktop Navigation */}
         <nav className="hidden flex-1 items-center space-x-6 md:flex">
           {renderNavLinks()}
+          <Button variant="ghost" onClick={openChatbot} className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
+            Chatbot
+          </Button>
         </nav>
 
         {/* Right side actions */}
@@ -70,6 +78,9 @@ export function Header() {
               <SheetContent side="right">
                 <div className="flex flex-col gap-y-4 pt-6">
                   {renderNavLinks(true)}
+                  <Button variant="ghost" onClick={openChatbot} className="block py-2 text-lg text-muted-foreground justify-start">
+                    Chatbot
+                  </Button>
                 </div>
               </SheetContent>
             </Sheet>

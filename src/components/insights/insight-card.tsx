@@ -17,7 +17,7 @@ interface InsightCardProps {
 export function InsightCard({ insight }: InsightCardProps) {
   return (
     <Link href={`/insights/${insight.id}`} className="block group">
-      <Card className="h-full flex flex-col overflow-hidden transition-all duration-300 group-hover:shadow-lg group-hover:border-primary">
+      <Card className="h-full flex flex-col overflow-hidden transition-all duration-300 group-hover:shadow-lg group-hover:border-primary group-hover:scale-105 group-hover:-translate-y-1">
         <CardHeader>
           <CardTitle className="leading-tight">{insight.title}</CardTitle>
         </CardHeader>

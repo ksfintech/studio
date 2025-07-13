@@ -19,6 +19,8 @@ import {
 } from '@/components/ui/accordion';
 import { ArrowLeft } from 'lucide-react';
 import { AdminAgentList } from './admin-tool-list';
+import { SeedAgentsButton } from './seed-agents-button';
+import { UpdateLogoUrlsButton } from './update-logo-urls-button';
 
 export const metadata: Metadata = {
   title: 'Manage Agents | AIFinTechInsights.com',
@@ -47,6 +49,19 @@ export default async function ManageAgentsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h3 className="text-lg font-medium">Database Management</h3>
+              <p className="text-sm text-muted-foreground">
+                Add new agents from the placeholder data to your database
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <UpdateLogoUrlsButton />
+              <SeedAgentsButton />
+            </div>
+          </div>
+          
           <AdminAgentList agents={agents} />
 
           <Accordion type="single" collapsible className="w-full mt-8">
