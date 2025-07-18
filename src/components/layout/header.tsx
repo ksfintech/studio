@@ -5,20 +5,21 @@ import { usePathname } from 'next/navigation';
 import { Icons } from '@/components/icons';
 import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet';
-import { Menu } from 'lucide-react';
+import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from '../ui/sheet';
+import { Menu, Bot, Home, BookOpen, Calculator, Info, BarChart3, Star, UserCog } from 'lucide-react';
 import { ThemeToggle } from './theme-toggle';
 import { useChatbot } from '@/context/chatbot-context';
+import { VisuallyHidden } from '../ui/visually-hidden';
 
 const navItems = [
-  { href: '/', label: 'Agents' },
-  { href: '/learn', label: 'Learn' },
-  { href: '/calculators', label: 'Calculators' },
-  { href: '/about', label: 'About' },
-  { href: '/insights', label: 'Insights' },
-  { href: '/compare', label: 'Compare' },
-  { href: '/recommend', label: 'Recommender' },
-  { href: '/admin', label: 'Admin' },
+  { href: '/', label: 'Agents', icon: Home },
+  { href: '/learn', label: 'Learn', icon: BookOpen },
+  { href: '/calculators', label: 'Calculators', icon: Calculator },
+  { href: '/about', label: 'About', icon: Info },
+  { href: '/insights', label: 'Insights', icon: BarChart3 },
+  { href: '/compare', label: 'Compare', icon: BarChart3 },
+  { href: '/recommend', label: 'Recommender', icon: Star },
+  { href: '/admin', label: 'Admin', icon: UserCog },
 ];
 
 export function Header() {
@@ -35,10 +36,11 @@ export function Header() {
           pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href))
             ? 'text-primary'
             : 'text-muted-foreground',
-          isMobile && 'block py-2 text-lg'
+          isMobile ? 'flex items-center gap-2 py-2 text-lg' : 'flex items-center p-2'
         )}
       >
-        {item.label}
+        <item.icon className="h-5 w-5" />
+        <span className={isMobile ? 'block' : 'sr-only'}>{item.label}</span>
       </Link>
     ));
 
@@ -57,8 +59,9 @@ export function Header() {
         {/* Desktop Navigation */}
         <nav className="hidden flex-1 items-center space-x-6 md:flex">
           {renderNavLinks()}
-          <Button variant="ghost" onClick={openChatbot} className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
-            Chatbot
+          <Button variant="ghost" onClick={openChatbot} className="flex items-center p-2 text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
+            <Bot className="h-5 w-5" />
+            <span className="sr-only">Chatbot</span>
           </Button>
         </nav>
 
@@ -76,9 +79,14 @@ export function Header() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="right">
+                <VisuallyHidden>
+                  <SheetTitle>Mobile Navigation</SheetTitle>
+                  <SheetDescription />
+                </VisuallyHidden>
                 <div className="flex flex-col gap-y-4 pt-6">
                   {renderNavLinks(true)}
-                  <Button variant="ghost" onClick={openChatbot} className="block py-2 text-lg text-muted-foreground justify-start">
+                  <Button variant="ghost" onClick={openChatbot} className="flex items-center gap-2 py-2 text-lg text-muted-foreground justify-start">
+                    <Bot className="h-5 w-5" />
                     Chatbot
                   </Button>
                 </div>
