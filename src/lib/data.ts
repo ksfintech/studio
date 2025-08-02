@@ -18,36 +18,48 @@ import {
   AGENTS as initialAgents,
   INSIGHTS as initialInsights,
   CATEGORIES as initialCategories,
+  CHATBOT_CONTEXTS,
 } from './placeholder-data';
 import type { Agent, Insight } from './definitions';
 
 // --- Featured Agent ---
-const FEATURED_AGENT_DOC_REF = doc(db, 'app_config', 'featured_agent');
+// Note: FEATURED_AGENT_DOC_REF will be created dynamically when db is available
 
 export async function setFeaturedAgents(agentIds: string[]): Promise<void> {
-  await setDoc(FEATURED_AGENT_DOC_REF, { agentIds: agentIds });
+  if (!db) return;
+  const featuredAgentDocRef = doc(db!, 'app_config', 'featured_agent');
+  await setDoc(featuredAgentDocRef, { agentIds: agentIds });
 }
 
 export async function getFeaturedAgentIds(): Promise<string[]> {
-  const docSnap = await getDoc(FEATURED_AGENT_DOC_REF);
-  if (docSnap.exists()) {
-    return docSnap.data().agentIds ?? [];
+  if (!db) return [];
+  try {
+    const featuredAgentDocRef = doc(db!, 'app_config', 'featured_agent');
+    const docSnap = await getDoc(featuredAgentDocRef);
+    if (docSnap.exists()) {
+      return docSnap.data().agentIds ?? [];
+    }
+    return [];
+  } catch (error) {
+    console.log('Firebase connection failed for featured agents...');
+    return [];
   }
-  return [];
 }
 
 // --- Agents ---
 
 export async function updateAgent(id: string, agentData: Omit<Agent, 'id'>): Promise<void> {
-  const docRef = doc(db, 'agents', id);
+  if (!db) return;
+  const docRef = doc(db!, 'agents', id);
   await setDoc(docRef, agentData);
 }
 
 export async function deleteAgent(id: string): Promise<void> {
-  const agentDocRef = doc(db, 'agents', id);
-  const featuredDocRef = doc(db, 'app_config', 'featured_agent');
+  if (!db) return;
+  const agentDocRef = doc(db!, 'agents', id);
+  const featuredDocRef = doc(db!, 'app_config', 'featured_agent');
 
-  await runTransaction(db, async (transaction) => {
+  await runTransaction(db!, async (transaction) => {
     // This transaction is atomic.
     const featuredSnap = await transaction.get(featuredDocRef);
     if (featuredSnap.exists()) {
@@ -62,6 +74,7 @@ export async function deleteAgent(id: string): Promise<void> {
 }
 
 export async function addAgent(agentData: Omit<Agent, 'id'>): Promise<Agent> {
+  if (!db) throw new Error('Firebase not available');
   const id = agentData.name
     .toLowerCase()
     .replace(/\s+/g, '-')
@@ -72,7 +85,7 @@ export async function addAgent(agentData: Omit<Agent, 'id'>): Promise<Agent> {
     logoUrl: agentData.logoUrl || undefined,
   };
 
-  const docRef = doc(db, 'agents', id);
+  const docRef = doc(db!, 'agents', id);
   // We don't store the ID in the document itself, only use it as the document ID.
   await setDoc(docRef, newAgentData);
 
@@ -80,154 +93,184 @@ export async function addAgent(agentData: Omit<Agent, 'id'>): Promise<Agent> {
 }
 
 export async function getAgents(): Promise<Agent[]> {
-  const agentsCollection = collection(db, 'agents');
+  // Return local data immediately if Firebase is not available
+  if (!db) {
+    console.log('Firebase not available. Using local agents data...');
+    return initialAgents.sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  try {
+    const agentsCollection = collection(db!, 'agents');
+    const agentSnapshot = await getDocs(agentsCollection);
+
+    if (agentSnapshot.empty) {
+      console.log('No agents found. Using local data...');
+      return initialAgents.sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    const agentList = agentSnapshot.docs.map(
+      doc =>
+        ({
+          id: doc.id,
+          ...doc.data(),
+        } as Agent)
+    );
+
+    return agentList.sort((a, b) => a.name.localeCompare(b.name));
+  } catch (error) {
+    console.log('Firebase connection failed. Using local agents data...');
+    return initialAgents.sort((a, b) => a.name.localeCompare(b.name));
+  }
+}
+
+export async function seedNewAgents(): Promise<void> {
+  if (!db) return;
+  const agentsCollection = collection(db!, 'agents');
   const agentSnapshot = await getDocs(agentsCollection);
 
   if (agentSnapshot.empty) {
     console.log('No agents found. Seeding database...');
-    const batch = writeBatch(db);
+    const batch = writeBatch(db!);
     initialAgents.forEach(agent => {
       const { id, ...agentData } = agent;
-      const docRef = doc(db, 'agents', id);
+      const docRef = doc(db!, 'agents', id);
       batch.set(docRef, agentData);
     });
     await batch.commit();
     console.log('Database seeded with initial agents.');
-    return initialAgents.sort((a, b) => a.name.localeCompare(b.name));
-  }
-
-  const agentList = agentSnapshot.docs.map(
-    doc =>
-      ({
-        id: doc.id,
-        ...(doc.data() as Omit<Agent, 'id'>),
-      } as Agent)
-  );
-  return agentList.sort((a, b) => a.name.localeCompare(b.name));
-}
-
-export async function seedNewAgents(): Promise<void> {
-  const agentsCollection = collection(db, 'agents');
-  const agentSnapshot = await getDocs(agentsCollection);
-  const existingAgentIds = new Set(agentSnapshot.docs.map(doc => doc.id));
-  
-  const newAgents = initialAgents.filter(agent => !existingAgentIds.has(agent.id));
-  
-  if (newAgents.length > 0) {
-    console.log(`Adding ${newAgents.length} new agents to database...`);
-    const batch = writeBatch(db);
-    newAgents.forEach(agent => {
-      const { id, ...agentData } = agent;
-      const docRef = doc(db, 'agents', id);
-      batch.set(docRef, agentData);
-    });
-    await batch.commit();
-    console.log(`Successfully added ${newAgents.length} new agents.`);
   } else {
     console.log('No new agents to add.');
   }
 }
 
 export async function getAgentById(id: string): Promise<Agent | undefined> {
-  const docRef = doc(db, 'agents', id);
-  const docSnap = await getDoc(docRef);
+  // Return local data immediately if Firebase is not available
+  if (!db) {
+    console.log('Firebase not available. Using local agents data...');
+    return initialAgents.find(agent => agent.id === id);
+  }
 
-  if (docSnap.exists()) {
-    return {
-      id: docSnap.id,
-      ...(docSnap.data() as Omit<Agent, 'id'>),
-    } as Agent;
-  } else {
-    return undefined;
+  try {
+    const docRef = doc(db!, 'agents', id);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      return {
+        id: docSnap.id,
+        ...(docSnap.data() as Omit<Agent, 'id'>),
+      } as Agent;
+    } else {
+      return undefined;
+    }
+  } catch (error) {
+    console.log('Firebase connection failed. Using local agents data...');
+    return initialAgents.find(agent => agent.id === id);
   }
 }
 
 export async function getCategories(): Promise<string[]> {
-  const categoriesCollection = collection(db, 'categories');
-  const categorySnapshot = await getDocs(categoriesCollection);
-
-  if (categorySnapshot.empty) {
-    console.log('No categories found. Seeding database...');
-    const batch = writeBatch(db);
-    initialCategories.forEach(category => {
-      const docRef = doc(db, 'categories', category.id);
-      batch.set(docRef, { name: category.name });
-    });
-    await batch.commit();
-    console.log('Database seeded with initial categories.');
-    return initialCategories.map(c => c.name).sort();
+  if (!db) {
+    console.log('Firebase not available. Using local categories data...');
+    return initialCategories.map(c => c.name);
   }
 
-  const categoryList = categorySnapshot.docs.map(
-    doc => doc.data().name as string
-  );
-  return categoryList.sort();
+  try {
+    const categoriesCollection = collection(db!, 'categories');
+    const categorySnapshot = await getDocs(categoriesCollection);
+
+    if (categorySnapshot.empty) {
+      console.log('No categories found. Using local data...');
+      return initialCategories.map(c => c.name);
+    }
+
+    const categoryList = categorySnapshot.docs.map(doc => doc.data().name as string);
+    return categoryList.sort();
+  } catch (error) {
+    console.log('Firebase connection failed. Using local categories data...');
+    return initialCategories.map(c => c.name);
+  }
 }
 
 // --- Insights ---
 
 export async function addInsight(insightData: Omit<Insight, 'id'>): Promise<Insight> {
+  if (!db) throw new Error('Firebase not available');
   const id = insightData.title
     .toLowerCase()
     .replace(/\s+/g, '-')
     .replace(/[^\w-]+/g, '');
   
-  const docRef = doc(db, 'insights', id);
+  const docRef = doc(db!, 'insights', id);
   await setDoc(docRef, insightData);
 
   return { id, ...insightData };
 }
 
 export async function updateInsight(id: string, insightData: Omit<Insight, 'id'>): Promise<void> {
-  const docRef = doc(db, 'insights', id);
+  if (!db) return;
+  const docRef = doc(db!, 'insights', id);
   await setDoc(docRef, insightData, { merge: true });
 }
 
 export async function deleteInsight(id: string): Promise<void> {
-  const docRef = doc(db, 'insights', id);
+  if (!db) return;
+  const docRef = doc(db!, 'insights', id);
   await deleteDoc(docRef);
 }
 
 export async function getInsights(): Promise<Insight[]> {
-  const insightsCollection = collection(db, 'insights');
-  const insightSnapshot = await getDocs(insightsCollection);
-
-  if (insightSnapshot.empty) {
-    console.log('No insights found. Seeding database...');
-    const batch = writeBatch(db);
-    initialInsights.forEach(insight => {
-      const { id, ...insightData } = insight;
-      const docRef = doc(db, 'insights', id);
-      batch.set(docRef, insightData);
-    });
-    await batch.commit();
-    console.log('Database seeded with initial insights.');
+  if (!db) {
+    console.log('Firebase not available. Using local insights data...');
     return initialInsights.sort((a, b) => a.title.localeCompare(b.title));
   }
 
-  const insightList = insightSnapshot.docs.map(
-    doc =>
-      ({
-        id: doc.id,
-        ...(doc.data() as Omit<Insight, 'id'>),
-      } as Insight)
-  );
-  return insightList.sort((a, b) => a.title.localeCompare(b.title));
+  try {
+    const insightsCollection = collection(db!, 'insights');
+    const insightSnapshot = await getDocs(insightsCollection);
+
+    if (insightSnapshot.empty) {
+      console.log('No insights found. Using local data...');
+      return initialInsights.sort((a, b) => a.title.localeCompare(b.title));
+    }
+
+    const insightList = insightSnapshot.docs.map(
+      doc =>
+        ({
+          id: doc.id,
+          ...doc.data(),
+        } as Insight)
+    );
+
+    return insightList.sort((a, b) => a.title.localeCompare(b.title));
+  } catch (error) {
+    console.log('Firebase connection failed. Using local insights data...');
+    return initialInsights.sort((a, b) => a.title.localeCompare(b.title));
+  }
 }
 
 export async function getInsightById(
   id: string
 ): Promise<Insight | undefined> {
-  const docRef = doc(db, 'insights', id);
-  const docSnap = await getDoc(docRef);
+  if (!db) {
+    console.log('Firebase not available. Using local insights data...');
+    return initialInsights.find(insight => insight.id === id);
+  }
 
-  if (docSnap.exists()) {
-    return {
-      id: docSnap.id,
-      ...(docSnap.data() as Omit<Insight, 'id'>),
-    } as Insight;
-  } else {
-    return undefined;
+  try {
+    const docRef = doc(db!, 'insights', id);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      return {
+        id: docSnap.id,
+        ...(docSnap.data() as Omit<Insight, 'id'>),
+      } as Insight;
+    } else {
+      return undefined;
+    }
+  } catch (error) {
+    console.log('Firebase connection failed. Using local insights data...');
+    return initialInsights.find(insight => insight.id === id);
   }
 }
 
@@ -329,10 +372,11 @@ const LOGO_URLS: Record<string, string> = {
 };
 
 export async function updateLogoUrls(): Promise<void> {
-  const agentsCollection = collection(db, 'agents');
+  if (!db) return;
+  const agentsCollection = collection(db!, 'agents');
   const agentSnapshot = await getDocs(agentsCollection);
   
-  const batch = writeBatch(db);
+  const batch = writeBatch(db!);
   let updatedCount = 0;
   
   agentSnapshot.docs.forEach(doc => {
@@ -355,17 +399,34 @@ export async function updateLogoUrls(): Promise<void> {
 }
 
 export async function getChatbotContexts() {
-    try {
-        const contextsCollection = collection(db, 'chatbot-context');
-        const q = query(contextsCollection, orderBy('createdAt', 'desc'));
-        const snapshot = await getDocs(q);
-        
-        if (snapshot.empty) {
-            return [];
-        }
-        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as { id: string; text: string; createdAt: Date }));
-    } catch (error) {
-        console.error('Error getting chatbot contexts: ', error);
-        return [];
+  if (!db) {
+    console.log('Firebase not available. Using local chatbot contexts...');
+    return CHATBOT_CONTEXTS;
+  }
+
+  try {
+    const contextsCollection = collection(db!, 'chatbot-context');
+    const q = query(contextsCollection, orderBy('createdAt', 'desc'));
+    const snapshot = await getDocs(q);
+    
+    if (snapshot.empty) {
+      console.log('No chatbot contexts found in Firebase. Using local data...');
+      return CHATBOT_CONTEXTS;
     }
+    
+    // Map Firebase data to expected format, handling missing section field
+    return snapshot.docs.map(doc => {
+      const data = doc.data();
+      return { 
+        id: doc.id, 
+        section: data.section || 'General', // Default section if missing
+        text: data.text || '',
+        createdAt: data.createdAt ? new Date(data.createdAt.seconds * 1000) : new Date()
+      };
+    });
+  } catch (error) {
+    console.error('Error getting chatbot contexts: ', error);
+    console.log('Falling back to local chatbot contexts...');
+    return CHATBOT_CONTEXTS;
+  }
 }

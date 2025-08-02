@@ -6,6 +6,23 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  
+  webpack: (config, { isServer }) => {
+    // Handle handlebars compatibility issue
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      net: false,
+      tls: false,
+    };
+    
+    // Ignore webpack warnings for handlebars
+    config.ignoreWarnings = [
+      /require\.extensions is not supported by webpack/,
+    ];
+    
+    return config;
+  },
   images: {
     remotePatterns: [
       {

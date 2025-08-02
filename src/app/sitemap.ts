@@ -1,11 +1,20 @@
 
 import { getAgents, getInsights } from '@/lib/data';
+import { AGENTS, INSIGHTS } from '@/lib/placeholder-data';
 import type { MetadataRoute } from 'next';
 
 const BASE_URL = 'https://aifintechinsights.com';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [agents, insights] = await Promise.all([getAgents(), getInsights()]);
+  let agents, insights;
+  
+  try {
+    [agents, insights] = await Promise.all([getAgents(), getInsights()]);
+  } catch (error) {
+    console.log('Using local data for sitemap generation...');
+    agents = AGENTS;
+    insights = INSIGHTS;
+  }
 
   const agentUrls = agents.map(agent => ({
     url: `${BASE_URL}/tools/${agent.id}`,

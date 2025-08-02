@@ -605,7 +605,7 @@ export default function AIImplementationGuidePage() {
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span>Model Accuracy</span>
-                      <span className="text-green-600">>95%</span>
+                      <span className="text-green-600">&gt;95%</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span>Processing Time</span>
@@ -613,7 +613,7 @@ export default function AIImplementationGuidePage() {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span>System Uptime</span>
-                      <span className="text-green-600">>99.9%</span>
+                      <span className="text-green-600">&gt;99.9%</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span>Error Rate</span>
