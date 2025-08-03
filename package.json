@@ -49,7 +49,7 @@
     "@tiptap/react": "^2.4.0",
     "@tiptap/starter-kit": "^2.4.0",
     "all": "^0.0.0",
-    "cheerio": "^1.1.2",
+    "cheerio": "^1.0.0-rc.12",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
@@ -89,7 +89,6 @@
     "tailwindcss": "^3.4.1",
     "typescript": "^5",
     "@uiw/react-md-editor": "^4.0.8",
-    "cheerio": "^1.1.2",
     "react-markdown": "^10.1.0",
     "react-quill": "^2.0.0"
   }
