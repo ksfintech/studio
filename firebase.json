@@ -1,15 +1,1 @@
-{
-  "apphosting": {
-    "backendId": "aifintechinsights",
-    "environmentVariables": {
-      "GEMINI_API_KEY": "AIzaSyAp9484eRFa7X4hKPevl4dKsGQBmGDPaiE",
-      "NEXT_PUBLIC_FIREBASE_API_KEY": "AIzaSyAmCymnNst9545zxYMjPsDzPdVjhYV06MM",
-      "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN": "ai-fintech-insights.firebaseapp.com",
-      "NEXT_PUBLIC_FIREBASE_PROJECT_ID": "ai-fintech-insights",
-      "NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET": "ai-fintech-insights.appspot.com",
-      "NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID": "594019690566",
-      "NEXT_PUBLIC_FIREBASE_APP_ID": "1:594019690566:web:f192f4efbfa072e80c4247"
-    },
-    "alwaysDeployFromSource": true
-  }
-}
+
