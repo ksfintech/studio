@@ -7,13 +7,17 @@ const MDEditor = dynamic(() => import('@uiw/react-md-editor'), { ssr: false });
 import '@uiw/react-md-editor/markdown-editor.css';
 import '@uiw/react-markdown-preview/markdown.css';
 
-function toPlainSection(section: any) {
-  // Only keep plain fields
-  return {
-    id: section.id,
-    title: section.title,
-    description: section.description,
-  };
+// Deeply convert Firestore Timestamps to ISO strings
+function toPlainObject(obj: any): any {
+  if (obj == null) return obj;
+  if (typeof obj !== 'object') return obj;
+  if (typeof obj.toDate === 'function') return obj.toDate().toISOString();
+  if (Array.isArray(obj)) return obj.map(toPlainObject);
+  const plain: any = {};
+  for (const key in obj) {
+    plain[key] = toPlainObject(obj[key]);
+  }
+  return plain;
 }
 
 export default function ChatbotContextAdminPage() {
@@ -26,12 +30,11 @@ export default function ChatbotContextAdminPage() {
 
   async function loadContext() {
     setLoading(true);
+    const sections = (await getChatbotContextSections()).map(toPlainObject);
     let md = '';
-    const sections = (await getChatbotContextSections()).map(toPlainSection);
     for (const s of sections) {
-      const entries = await getChatbotContextEntries(s.id);
+      const entries = (await getChatbotContextEntries(s.id)).map(toPlainObject);
       for (const entry of entries) {
-        // Only use plain text field
         md = entry.text;
         break;
       }
@@ -47,7 +50,7 @@ export default function ChatbotContextAdminPage() {
     setLoading(true);
     try {
       // Wipe all sections
-      const sections = (await getChatbotContextSections()).map(toPlainSection);
+      const sections = (await getChatbotContextSections()).map(toPlainObject);
       for (const s of sections) {
         await deleteChatbotContextSection(s.id);
       }
@@ -76,7 +79,7 @@ export default function ChatbotContextAdminPage() {
           <MDEditor
             value={contextInput}
             onChange={v => setContextInput(v || '')}
-            height={window.innerHeight ? Math.max(400, window.innerHeight - 300) : 600}
+            height={600} // Fixed height to avoid SSR window reference
             preview="edit"
             className="rounded-lg border border-gray-200 shadow-sm w-full h-full"
             style={{ minHeight: 400, height: '70vh' }}
