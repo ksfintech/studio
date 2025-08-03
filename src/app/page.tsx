@@ -22,7 +22,7 @@ export default async function Home() {
     <>
       <div className="container mx-auto px-4 pt-12 md:pt-20 pb-8 text-center">
         <h1 className="text-4xl md:text-6xl font-bold tracking-tighter mb-4 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-          Find the Right AI Agent for your Financial Needs
+          Find the Right AI Fintech Agent
         </h1>
         <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
           Your guide to the world of AI in Fintech. Discover, filter, and
