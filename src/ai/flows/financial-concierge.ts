@@ -2,54 +2,50 @@ import { ai } from '@/ai/genkit';
 import { getChatbotContexts } from '@/lib/data';
 import * as z from 'zod';
 
+// Accept optional sectionIds/tags for context filtering
 export const financialConcierge = ai.defineFlow(
   {
     name: 'financialConcierge',
-    inputSchema: z.string(),
+    inputSchema: z.object({ query: z.string(), sectionIds: z.array(z.string()).optional(), tags: z.array(z.string()).optional() }),
     outputSchema: z.string(),
   },
-  async (query) => {
+  async ({ query, sectionIds, tags }) => {
     try {
-      // Check if Gemini API key is available
       if (!process.env.GEMINI_API_KEY) {
         console.error('GEMINI_API_KEY is not set');
         return "I'm sorry, but the AI service is not properly configured. Please contact support.";
       }
-
       console.log('Getting chatbot contexts...');
-      const contexts = await getChatbotContexts();
+      const contexts = await getChatbotContexts({ sectionIds, tags });
       console.log(`Retrieved ${contexts.length} contexts`);
-      
-      // Use only the first context to avoid token limits
-      const context = contexts[0]?.text || "AI in fintech refers to the use of artificial intelligence technologies in financial services.";
-      
-      // Truncate context if it's too long (keep first 1000 characters)
-      const truncatedContext = context.length > 1000 ? context.substring(0, 1000) + '...' : context;
-
+      if (!contexts.length) {
+        return "I'm sorry, but there is no context available to answer your question.";
+      }
+      // Group by section, concatenate text
+      let contextText = '';
+      let lastSection = '';
+      for (const ctx of contexts) {
+        if (ctx.sectionTitle !== lastSection) {
+          contextText += `\n\n[Section: ${ctx.sectionTitle}]\n`;
+          lastSection = ctx.sectionTitle;
+        }
+        contextText += ctx.text + '\n';
+      }
+      // Truncate if too long
+      const truncatedContext = contextText.length > 3000 ? contextText.substring(0, 3000) + '...' : contextText;
       console.log('Generating AI response...');
-      // Use a simple generate call instead of prompt
       const result = await ai.generate({
-        prompt: `You are an AI FinTech Insights Concierge. Answer this question based on the provided context.
-
-Context: ${truncatedContext}
-
-Question: ${query}
-
-Answer:`,
+        prompt: `You are an AI FinTech Insights Concierge. Answer this question based on the provided context.\n\nContext: ${truncatedContext}\n\nQuestion: ${query}\n\nAnswer:`,
       });
-      
       const responseText = result.text;
       if (!responseText) {
         console.error('AI generated empty response');
         return "I'm sorry, but I was unable to generate a response. Please try rephrasing your question or check back later.";
       }
-      
       console.log('AI response generated successfully');
       return responseText;
     } catch (error) {
       console.error('Financial concierge error:', error);
-      
-      // Provide more specific error messages based on the error type
       if (error instanceof Error) {
         if (error.message.includes('API key')) {
           return "I'm sorry, but there's an issue with the AI service configuration. Please try again later.";
@@ -59,13 +55,12 @@ Answer:`,
           return "I'm sorry, but the AI service is currently experiencing high demand. Please try again in a few minutes.";
         }
       }
-      
       return "I'm sorry, but I encountered an error while processing your request. Please try again later.";
     }
   }
 );
 
 // This is the function that will be called from the server action.
-export async function askFinancialConcierge(query: string): Promise<string> {
-  return financialConcierge(query);
+export async function askFinancialConcierge(query: string, options?: { sectionIds?: string[]; tags?: string[] }): Promise<string> {
+  return financialConcierge({ query, ...(options || {}) });
 } 

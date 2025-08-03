@@ -14,8 +14,9 @@ import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const insight = await getInsightById(params.id);
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const insight = await getInsightById(id);
   if (!insight) {
     return { title: 'Insight Not Found' };
   }
@@ -25,8 +26,8 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   };
 }
 
-export default async function EditInsightPage({ params }: { params: { id: string } }) {
-  const id = params.id;
+export default async function EditInsightPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const insight = await getInsightById(id);
 
   if (!insight) {

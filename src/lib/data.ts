@@ -21,6 +21,8 @@ import {
   CHATBOT_CONTEXTS,
 } from './placeholder-data';
 import type { Agent, Insight } from './definitions';
+import { collection as fsCollection, doc as fsDoc, getDocs as fsGetDocs, setDoc as fsSetDoc, deleteDoc as fsDeleteDoc, Timestamp } from 'firebase/firestore';
+import { load } from 'cheerio';
 
 // --- Featured Agent ---
 // Note: FEATURED_AGENT_DOC_REF will be created dynamically when db is available
@@ -48,10 +50,15 @@ export async function getFeaturedAgentIds(): Promise<string[]> {
 
 // --- Agents ---
 
+// Utility to remove undefined fields from an object
+function removeUndefined(obj: Record<string, any>) {
+  return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v !== undefined));
+}
+
 export async function updateAgent(id: string, agentData: Omit<Agent, 'id'>): Promise<void> {
   if (!db) return;
   const docRef = doc(db!, 'agents', id);
-  await setDoc(docRef, agentData);
+  await setDoc(docRef, removeUndefined(agentData));
 }
 
 export async function deleteAgent(id: string): Promise<void> {
@@ -87,7 +94,7 @@ export async function addAgent(agentData: Omit<Agent, 'id'>): Promise<Agent> {
 
   const docRef = doc(db!, 'agents', id);
   // We don't store the ID in the document itself, only use it as the document ID.
-  await setDoc(docRef, newAgentData);
+  await setDoc(docRef, removeUndefined(newAgentData));
 
   return { id, ...newAgentData };
 }
@@ -371,25 +378,191 @@ const LOGO_URLS: Record<string, string> = {
   'Stash': 'https://www.stash.com/static/images/stash-logo.svg',
 };
 
+const DEFAULT_LOGO_URL = 'https://avatars.githubusercontent.com/u/9919?s=200&v=4'; // Modern, visually appealing default logo
+
+function getDomainFromUrl(url: string): string | null {
+  try {
+    const u = new URL(url);
+    return u.hostname.replace(/^www\./, '');
+  } catch {
+    return null;
+  }
+}
+
 export async function updateLogoUrls(): Promise<void> {
   if (!db) return;
   const agentsCollection = collection(db!, 'agents');
   const agentSnapshot = await getDocs(agentsCollection);
-  
+
   const batch = writeBatch(db!);
   let updatedCount = 0;
-  
-  agentSnapshot.docs.forEach(doc => {
-    const agentData = doc.data() as Omit<Agent, 'id'>;
-    const companyName = agentData.company;
-    const logoUrl = LOGO_URLS[companyName];
-    
-    if (logoUrl && !agentData.logoUrl) {
-      batch.update(doc.ref, { logoUrl });
-      updatedCount++;
+
+  // Helper to check if a URL is a valid image
+  async function isValidImageUrl(url: string): Promise<boolean> {
+    try {
+      const res = await fetch(url, { method: 'HEAD' });
+      const contentType = res.headers.get('content-type') || '';
+      return res.ok && contentType.startsWith('image/');
+    } catch {
+      return false;
     }
-  });
-  
+  }
+
+  // Helper to extract logo from website HTML (cheerio)
+  async function extractLogoFromWebsite(website: string): Promise<string | null> {
+    try {
+      const res = await fetch(website, { method: 'GET' });
+      if (!res.ok) { console.log(`[LogoScrape] Failed to fetch: ${website}`); return null; }
+      const html = await res.text();
+      const $ = load(html);
+      let logoUrl: string | undefined;
+      // Try various <link rel=...> (case-insensitive)
+      const linkRels = [
+        'icon',
+        'shortcut icon',
+        'apple-touch-icon',
+      ];
+      for (const rel of linkRels) {
+        logoUrl = $(`link[rel='${rel}']`).attr('href') || logoUrl;
+        logoUrl = $(`link[rel='${rel.toLowerCase()}']`).attr('href') || logoUrl;
+        logoUrl = $(`link[rel='${rel.toUpperCase()}']`).attr('href') || logoUrl;
+      }
+      // Try any <link rel*="icon">
+      if (!logoUrl) {
+        $('link[rel]').each((_, el) => {
+          const rel = ($(el).attr('rel') || '').toLowerCase();
+          if (rel.includes('icon')) {
+            logoUrl = $(el).attr('href') || logoUrl;
+          }
+        });
+      }
+      // Try <img> with logo in class/id/alt
+      if (!logoUrl) {
+        const img = $('img').filter((i, el) => {
+          const alt = $(el).attr('alt') || '';
+          const cls = $(el).attr('class') || '';
+          const id = $(el).attr('id') || '';
+          return /logo/i.test(alt + cls + id);
+        }).first();
+        logoUrl = img.attr('src');
+      }
+      // Try <img> in header/nav/footer
+      if (!logoUrl) {
+        const img = $('header img, nav img, footer img').first();
+        logoUrl = img.attr('src');
+      }
+      // Try <img> with src containing 'logo'
+      if (!logoUrl) {
+        const img = $('img').filter((i, el) => {
+          const src = $(el).attr('src') || '';
+          return src.toLowerCase().includes('logo');
+        }).first();
+        logoUrl = img.attr('src');
+      }
+      // Handle protocol-relative URLs
+      if (logoUrl && logoUrl.startsWith('//')) {
+        logoUrl = 'https:' + logoUrl;
+      }
+      // Resolve relative URLs
+      if (logoUrl && !/^https?:/.test(logoUrl)) {
+        const base = new URL(website);
+        logoUrl = new URL(logoUrl, base).toString();
+      }
+      if (logoUrl) {
+        const valid = await isValidImageUrl(logoUrl);
+        console.log(`[LogoScrape] Found logo for ${website}: ${logoUrl} (valid: ${valid})`);
+        if (valid) return logoUrl;
+      } else {
+        console.log(`[LogoScrape] No logo found for ${website}`);
+      }
+      return null;
+    } catch (err) {
+      console.log(`[LogoScrape] Error for ${website}:`, err);
+      return null;
+    }
+  }
+
+  for (const docSnap of agentSnapshot.docs) {
+    const agentData = docSnap.data() as Omit<Agent, 'id'>;
+    const companyName = agentData.company;
+    let logoUrl = LOGO_URLS[companyName];
+    let shouldUpdate = false;
+    let newLogoSource = '';
+
+    // 1. Try mapped logo URL
+    if (logoUrl && await isValidImageUrl(logoUrl)) {
+      if (agentData.logoUrl !== logoUrl) {
+        shouldUpdate = true;
+        newLogoSource = 'mapped';
+        console.log(`[LogoUpdate] ${companyName}: Using mapped logo URL.`);
+      }
+    } else if (agentData.website) {
+      // 2. Try Clearbit Logo API
+      const domain = getDomainFromUrl(agentData.website);
+      if (domain) {
+        const clearbitUrl = `https://logo.clearbit.com/${domain}`;
+        if (await isValidImageUrl(clearbitUrl)) {
+          logoUrl = clearbitUrl;
+          if (agentData.logoUrl !== logoUrl) {
+            shouldUpdate = true;
+            newLogoSource = 'clearbit';
+            console.log(`[LogoUpdate] ${companyName}: Using Clearbit logo (${clearbitUrl}).`);
+          }
+        } else {
+          // 3. Try Google S2 Favicon API
+          const googleFaviconUrl = `https://www.google.com/s2/favicons?domain=${domain}`;
+          if (await isValidImageUrl(googleFaviconUrl)) {
+            logoUrl = googleFaviconUrl;
+            if (agentData.logoUrl !== logoUrl) {
+              shouldUpdate = true;
+              newLogoSource = 'google';
+              console.log(`[LogoUpdate] ${companyName}: Using Google S2 favicon (${googleFaviconUrl}).`);
+            }
+          } else {
+            // 4. Try scraping
+            const foundLogo = await extractLogoFromWebsite(agentData.website);
+            if (foundLogo) {
+              logoUrl = foundLogo;
+              if (agentData.logoUrl !== logoUrl) {
+                shouldUpdate = true;
+                newLogoSource = 'scraped';
+                console.log(`[LogoUpdate] ${companyName}: Using scraped logo (${foundLogo}).`);
+              }
+            } else {
+              logoUrl = DEFAULT_LOGO_URL;
+              if (agentData.logoUrl !== logoUrl) {
+                shouldUpdate = true;
+                newLogoSource = 'default';
+                console.log(`[LogoUpdate] ${companyName}: Using default logo.`);
+              }
+            }
+          }
+        }
+      } else {
+        logoUrl = DEFAULT_LOGO_URL;
+        if (agentData.logoUrl !== logoUrl) {
+          shouldUpdate = true;
+          newLogoSource = 'default';
+          console.log(`[LogoUpdate] ${companyName}: Invalid website, using default logo.`);
+        }
+      }
+    } else {
+      logoUrl = DEFAULT_LOGO_URL;
+      if (agentData.logoUrl !== logoUrl) {
+        shouldUpdate = true;
+        newLogoSource = 'default';
+        console.log(`[LogoUpdate] ${companyName}: No website, using default logo.`);
+      }
+    }
+
+    // 5. If a new/better logo is found, update it (even if the current one is valid)
+    if (shouldUpdate) {
+      batch.update(docSnap.ref, { logoUrl });
+      updatedCount++;
+      console.log(`[LogoUpdate] ${companyName}: Updated logoUrl to ${logoUrl} (source: ${newLogoSource})`);
+    }
+  }
+
   if (updatedCount > 0) {
     await batch.commit();
     console.log(`Updated logo URLs for ${updatedCount} agents.`);
@@ -398,35 +571,113 @@ export async function updateLogoUrls(): Promise<void> {
   }
 }
 
-export async function getChatbotContexts() {
+/**
+ * Fetch chatbot context entries from all sections, with optional filtering by sectionIds and tags.
+ * Returns a flat array of entries: { id, sectionId, sectionTitle, text, tags, order }
+ */
+export async function getChatbotContexts({ sectionIds, tags }: { sectionIds?: string[]; tags?: string[] } = {}) {
   if (!db) {
     console.log('Firebase not available. Using local chatbot contexts...');
     return CHATBOT_CONTEXTS;
   }
-
   try {
-    const contextsCollection = collection(db!, 'chatbot-context');
-    const q = query(contextsCollection, orderBy('createdAt', 'desc'));
-    const snapshot = await getDocs(q);
-    
-    if (snapshot.empty) {
-      console.log('No chatbot contexts found in Firebase. Using local data...');
-      return CHATBOT_CONTEXTS;
+    // Get all sections
+    const sectionsSnap = await fsGetDocs(fsCollection(db, 'chatbot_context_sections'));
+    let sections = sectionsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    if (sectionIds) {
+      sections = sections.filter(s => sectionIds.includes(s.id));
     }
-    
-    // Map Firebase data to expected format, handling missing section field
-    return snapshot.docs.map(doc => {
-      const data = doc.data();
-      return { 
-        id: doc.id, 
-        section: data.section || 'General', // Default section if missing
-        text: data.text || '',
-        createdAt: data.createdAt ? new Date(data.createdAt.seconds * 1000) : new Date()
-      };
-    });
+    // For each section, get entries
+    let allEntries: any[] = [];
+    for (const section of sections) {
+      const entriesSnap = await fsGetDocs(fsCollection(db, 'chatbot_context_sections', section.id, 'entries'));
+      let entries = entriesSnap.docs
+        .map(doc => ({ id: doc.id, ...doc.data(), sectionId: section.id, sectionTitle: section.title }))
+        .sort((a, b) => (a.order ?? 0) - (b.order ?? 0) || (a.createdAt?.seconds ?? 0) - (b.createdAt?.seconds ?? 0));
+      if (tags && tags.length > 0) {
+        entries = entries.filter(e => (e.tags || []).some((t: string) => tags.includes(t)));
+      }
+      allEntries.push(...entries);
+    }
+    // Order by section order (as in sections array), then entry order
+    return allEntries;
   } catch (error) {
     console.error('Error getting chatbot contexts: ', error);
     console.log('Falling back to local chatbot contexts...');
     return CHATBOT_CONTEXTS;
   }
+}
+
+// --- Chatbot Context Sections & Entries ---
+
+// List all sections
+export async function getChatbotContextSections() {
+  if (!db) return [];
+  const sectionsSnap = await fsGetDocs(fsCollection(db, 'chatbot_context_sections'));
+  return sectionsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+}
+
+// Add or update a section
+export async function upsertChatbotContextSection(section: { id: string, title: string, description?: string }) {
+  if (!db) return;
+  const docRef = fsDoc(db, 'chatbot_context_sections', section.id);
+  await fsSetDoc(docRef, {
+    title: section.title,
+    description: section.description || '',
+    updatedAt: Timestamp.now(),
+    createdAt: section.createdAt || Timestamp.now(),
+  }, { merge: true });
+}
+
+// Delete a section (and its entries)
+export async function deleteChatbotContextSection(sectionId: string) {
+  if (!db) return;
+  const sectionRef = fsDoc(db, 'chatbot_context_sections', sectionId);
+  // Delete all entries in the section
+  const entriesSnap = await fsGetDocs(fsCollection(db, 'chatbot_context_sections', sectionId, 'entries'));
+  for (const entryDoc of entriesSnap.docs) {
+    await fsDeleteDoc(entryDoc.ref);
+  }
+  await fsDeleteDoc(sectionRef);
+}
+
+// List entries in a section, ordered by 'order' then 'createdAt'
+export async function getChatbotContextEntries(sectionId: string) {
+  if (!db) return [];
+  const entriesSnap = await fsGetDocs(fsCollection(db, 'chatbot_context_sections', sectionId, 'entries'));
+  return entriesSnap.docs
+    .map(doc => ({ id: doc.id, ...doc.data() }))
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0) || (a.createdAt?.seconds ?? 0) - (b.createdAt?.seconds ?? 0));
+}
+
+// Add or update an entry (with order)
+export async function upsertChatbotContextEntry(sectionId: string, entry: { id: string, text: string, tags?: string[], order?: number }) {
+  if (!db) return;
+  const docRef = fsDoc(db, 'chatbot_context_sections', sectionId, 'entries', entry.id);
+  await fsSetDoc(docRef, {
+    text: entry.text,
+    tags: entry.tags || [],
+    order: entry.order ?? 0,
+    updatedAt: Timestamp.now(),
+    createdAt: entry.createdAt || Timestamp.now(),
+  }, { merge: true });
+}
+
+// Delete an entry
+export async function deleteChatbotContextEntry(sectionId: string, entryId: string) {
+  if (!db) return;
+  const docRef = fsDoc(db, 'chatbot_context_sections', sectionId, 'entries', entryId);
+  await fsDeleteDoc(docRef);
+}
+
+// Reorder entries in a section
+type EntryOrderUpdate = { id: string; order: number };
+export async function reorderChatbotContextEntries(sectionId: string, orderUpdates: EntryOrderUpdate[]) {
+  if (!db) return;
+  const batch = writeBatch(db);
+  for (const { id, order } of orderUpdates) {
+    const docRef = fsDoc(db, 'chatbot_context_sections', sectionId, 'entries', id);
+    batch.update(docRef, { order });
+  }
+  await batch.commit();
 }

@@ -31,7 +31,7 @@ const adminSections = [
     {
         title: 'Chatbot Context',
         description: 'Manage the knowledge base for the AI concierge.',
-        href: '/admin/chatbot',
+        href: '/admin/chatbot-context',
         icon: Bot,
     },
     {

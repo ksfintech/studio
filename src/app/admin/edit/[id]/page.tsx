@@ -14,9 +14,10 @@ import type { Metadata } from 'next';
 export async function generateMetadata({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }): Promise<Metadata> {
-  const agent = await getAgentById(params.id);
+  const { id } = await params;
+  const agent = await getAgentById(id);
   if (!agent) {
     return {
       title: 'Agent Not Found',
@@ -31,9 +32,9 @@ export async function generateMetadata({
 export default async function EditAgentPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const id = params.id;
+  const { id } = await params;
   const [agent, allCategories] = await Promise.all([
     getAgentById(id),
     getCategories(),

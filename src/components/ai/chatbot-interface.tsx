@@ -91,7 +91,7 @@ export function ChatbotInterface() {
   };
 
   return (
-    <Card className="h-[600px] flex flex-col shadow-xl border-0 bg-white/80 backdrop-blur-sm">
+    <Card className="flex flex-col shadow-xl border-0 bg-white/80 backdrop-blur-sm w-full h-full min-h-0 flex-1">
       <CardContent className="flex-1 flex flex-col p-0">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-blue-50 to-purple-50">
@@ -111,7 +111,7 @@ export function ChatbotInterface() {
         </div>
 
         {/* Messages */}
-        <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
+        <ScrollArea className="flex-1 p-4 min-h-0" ref={scrollAreaRef}>
           <div className="space-y-4">
             {messages.map((message) => (
               <div
